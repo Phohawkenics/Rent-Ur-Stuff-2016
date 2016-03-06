@@ -215,7 +215,7 @@ class CreateReviewHandler(BaseHandler):
 class ProductSearchHandler(BaseHandler):
   """The handler for doing a product search."""
 
-  _DEFAULT_DOC_LIMIT = 3  #default number of search results to display per page.
+  _DEFAULT_DOC_LIMIT = 10  #default number of search results to display per page.
   _OFFSET_LIMIT = 1000
 
   def parseParams(self):
