@@ -1,94 +1,51 @@
 {% extends "base.html" %}
+
 {% block head %}
   <title>Product Search Demo App</title>
 {% endblock %}
 
-
-{% block sidebar %}
-
-
-{% if ratings_links %}
-  <h3>Filter on Rating</h3>
-
-  <ul>
-  {% for elt in ratings_links %}
-     <li>
-      <a href="{{elt.0}}">{{elt.1}}</a>
-     </li>
-  {% endfor %}
- </ul>
- {% endif %}
-
- {% endblock %}
-
-
  {% block content %}
-
-   <h2>Product Search Demo</h2>
-
-    <p>&nbsp;</p>
-
-   <p><a target="_blank" href="/static/instrs.html">Click for information</a> about the demo app. Log in to add sample data.</p>
-
-  <p>&nbsp;</p>
-
-
+	<p>&nbsp;</p>
+	<p><a target="_blank" href="/static/instrs.html">Click for information</a> about the demo app. Log in to add sample data.</p>
+	<p>&nbsp;</p>
     <h4>Product Search</h4>
-
-
-    <form name="searchform" action="/psearch" method="post">
-      <input type="hidden" name="qtype" value="product"/>
-
-      <table>
-
-      <tr>
-
-      <td>
-         <select id="category" name="category">
-          <option value="">Any Category</option>
-          {% for cat in cat_info %}
-           {% if cat.0 == pcategory %}
-             <option value="{{cat.0}}" selected="selected">{{cat.1}}</option>
-           {% else %}
-            <option value="{{cat.0}}">{{cat.1}}</option>
-           {% endif %}
-          {% endfor %}
-         </select>
-
-      </td>
-      <td>
-
-       <input type="text" id="query" name="query" size="80" value="{{base_pquery}}" />
-
-      </td>
-
-      <td>
-
-         Sort by: <select id="sort" name="sort">
-          {% for sort in sort_info %}
-           {% if sort.0 == sort_order %}
-             <option value="{{sort.0}}" selected="selected">{{sort.1}}</option>
-           {% else %}
-            <option value="{{sort.0}}">{{sort.1}}</option>
-           {% endif %}
-          {% endfor %}
-         </select>
-
-      </td></tr>
-
-      <tr>
-      <td>
-       <input type="submit" class="btn primary"  name="psearchsub" value="Product Search"/>
-       <input type="reset" class="btn primary"  name="psearchreset" value="Clear"/>
-      </td><td></td><td></td></tr>
-
-      </table>
-
-    </form>
-
-
-
+	<form name="searchform" class="form-horizontal col-xs-12 col-md-12 col-sm-12 col-lg-12" action="/psearch" method="post">
+		<div class="row">
+			<input type="hidden" name="qtype" value="product"/>
+			<div class="col-xs-12 col-md-4 col-sm-4 col-lg-3">
+				<select class=" form-control" id="category" name="category">
+					<option value="">Any Category</option>
+					{% for cat in cat_info %}
+					{% if cat.0 == pcategory %}
+					<option value="{{cat.0}}" selected="selected">{{cat.1}}</option>
+					{% else %}
+					<option value="{{cat.0}}">{{cat.1}}</option>
+					{% endif %}
+					{% endfor %}
+				</select>		
+			</div>
+			<div class=" col-xs-12 col-md-8 col-sm-8 col-lg-5">
+				<input class=" form-control" type="text" id="query" name="query" size="40" value="{{base_pquery}}"  placeholder="Search" />
+			</div>
+			<div class="col-xs-12 col-md-4 col-sm-4 col-lg-2">
+				<select class="form-control" id="sort" name="sort">
+					{% for sort in sort_info %}
+					{% if sort.0 == sort_order %}
+					<option value="{{sort.0}}" selected="selected">{{sort.1}}</option>
+					{% else %}
+					<option value="{{sort.0}}">{{sort.1}}</option>
+					{% endif %}
+					{% endfor %}
+				</select>
+			</div>
+			<div class=" col-xs-1 col-md-1 col-sm-1 col-lg-1">
+				<input type="submit" class="btn primary"  name="psearchsub" value="Product Search"/>
+			</div>
+		</div>
+	
+	</form>
     {% if search_response %}
+	<p>&nbsp;</p>
     <div>
      <h2>Product Search Results</h2>
 
@@ -106,7 +63,6 @@
         {% endif %}
       </p>
 
-      <p>&nbsp;</p>
       {% if returned_count > 0 %}
       <p>
        {{first_res}} - {{last_res}} of {{number_found}} {{qtype}}s shown for query: <i>{{print_query}}</i>.
@@ -114,22 +70,54 @@
       {% endif %}
 
       {% for result in search_response %}
-        <p>
-        <span style="color: #014C9D;"><i>Product Description</i></span>: {{result.3|safe}}<br/>
-        <span style="color: #014C9D;"><i>Product name</i></span>: {{result.5}}<br/>
-        <span style="color: #014C9D;"><i>Category</i></span>: {{result.6}}<br/>
-        <span style="color: #014C9D;"><i>Price</i></span>: {{result.4}}<br/>
-        <span style="color: #014C9D;"><i>Average Rating</i></span>:
-         {% if result.7 < 1 %}
-            None yet
-         {% else %}
-           {{result.7}}
-         {% endif %}
-        <br/>
-
-          <a href="/product?pid={{result.1}}">View product details</a>
-          &nbsp;<a href="/reviews?pid={{result.1}}&pname={{result.5}}">Reviews</a>
-        </p>
+	  
+		<article class="search-result row">
+			<div>
+				<h3><a href="#" title="">{{result.5}}</a></h3>
+			</div>
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+				<a href="#" title="Lorem ipsum" class="thumbnail"><img src="/static/img/2793581-xboxone_console.jpg" alt="Lorem ipsum" /></a>
+			</div>
+			<ul class="meta-search list-unstyled col-xs-12 col-sm-6 col-md-6 col-lg-6">
+					<li>
+						<div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+							<i class="glyphicon glyphicon-calendar"></i> <span> Availability </br> From: 02/15/2016 </br> To: 03/15/2016</span>
+						</div>
+					</li>
+					<li>
+						<div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+							<i class="glyphicon glyphicon-tags"></i> <span>Montreal, QC</span>
+						</div>
+					</li>
+					<li>
+						<div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+							<i class="glyphicon glyphicon-user"></i> <span>Mr. X</span>
+						</div>
+					</li>
+			</ul>
+			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+				<p>
+					<span style="color: #014C9D;"><i>Product Description</i></span>: {{result.3|safe}}<br/>
+					<span style="color: #014C9D;"><i>Category</i></span>: {{result.6}}<br/>
+					<span style="color: #014C9D;"><i>Price</i></span>: {{result.4}}<br/>
+					<span style="color: #014C9D;"><i>Average Rating: </i></span>
+					{% if result.7 < 1 %}
+						None yet
+					{% else %}
+						{{result.7}}
+					{% endif %}
+				</p>
+				<span class="plus">
+				<a href="/product?pid={{result.1}}">View product details <i class="glyphicon glyphicon-plus"></i>
+				</a>
+				</span>
+				<p>
+					<br/>
+					<a href="/reviews?pid={{result.1}}&pname={{result.5}}">Reviews</a>
+				</p>
+			</div>
+			<span class="clearfix"></span>
+		</article>
       {% endfor %}
 
       <p>

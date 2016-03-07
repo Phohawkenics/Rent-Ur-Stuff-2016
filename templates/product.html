@@ -12,9 +12,90 @@
 {% endblock %}
 
 
-  {% block content %}
+{% block content %}
+	<h2>Product Information for {{pname}}</h2>
+	<div class="row col-md-12 col-lg-12">
+		<div class="form-group col-md-6 col-lg-6">
+			<div>image placeholder</div>
+		</div>
+		<div class="form-group col-md-6 col-lg-6">
+			<p>
+				<br/>{% for field in prod_doc.fields %}
+				<b>{{field.name}}</b>:&nbsp;{{field.value}} <br/>
+				{% endfor %}
+				<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
+			</p>
+		</div>
+	</div>
+	<div class="row col-md-12 col-lg-12">
+		<div class="form-group">
+			<div class="col-md-6 col-lg-6"> 
+				<h4>Create a Review for {{pname}}</h4>
+				<form action="/create_review" method="post">
+					<input type="hidden" name="pid" value="{{pid}}" />
+					<input type="hidden" name="category" value="{{category}}" />
+					<input type="hidden" name="pname" value="{{pname}}" />
+					<div class="clearfix">
+						<label for="comment">review comment:</label>
+						<div class="input">
+							<textarea class="form-control" name="comment" rows="3" cols="80">{{comment}}</textarea>
+						</div>
+					</div>
+					<div class="clearfix">
+						<label for="rating">rating (1-5):</label>
+						<div class="input">
+							<input class="form-control" type="text" id="rating" name="rating" value="{{rating}}"/>
+						</div>
+					</div>
+					<div class="actions">
+						<input class="btn primary" id="subreview" name="subreview" type="submit" value="Review"/>
+						<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
+					</div>
+				</form>
 
-  <script type="text/javascript">
+				{% if user_is_admin %}
+				<p>Delete this product and its reviews; no undo (admin).</p>
+				<form action="/admin/delete_product" method="post">
+					<input type="hidden" name="pid" value="{{pid}}" />
+					<div class="actions">
+						<input class="btn primary" id="delete_prod" name="delete_prod" type="submit" value="Delete Product"/>
+					</div>
+				</form>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+  
+
+      <!-- For expository purposes, all document fields are listed below with their actual names; -->
+        <!-- a real customer-facing app would expose this information differently. -->
+	<div class="row col-md-12 col-lg-12">
+		<div id="mapbox"> 
+		   <div id="map" style="display: none; margin: 0 0 20px 20px;width: 650px; height: 300px;border: 1px solid #6666dd;">
+		   </div>
+
+		   <div>
+			  <div class="clearfix">
+			  <label for="rating">distance: </label>
+				<div class="input">
+				 <input type="text" id="distance" name="distance" /> &nbsp; units:
+				 <select id="units" name="units">
+				  <option value="km">km</option>
+				  <option value="miles">miles</option>
+				 </select>
+				</div>
+			  </div>
+			  <div class="actions">
+			  <input class="btn primary" id="locate" name="locate" type="submit" 
+			  value="Find stores near me" onclick="findLocation();"/>
+			</div>
+			<div id="loc_results">
+			</div>
+		   </div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
 
 // Geolocation with HTML 5 and Google Maps API based on example from
 // maxheapsize: http://maxheapsize.com/2009/04/11/getting-the-browsers-geolocation-with-html-5/
@@ -145,80 +226,4 @@ function mapServiceProvider(latitude,longitude, distance, data) {
 
 
 </script>
-
-      <h2>Product Information for {{pname}}</h2>
-
-      <!-- For expository purposes, all document fields are listed below with their actual names; -->
-        <!-- a real customer-facing app would expose this information differently. -->
-
-    <div id="mapbox" style="padding: 20px;border: 1px dotted #666;"> 
-
-       <div id="map" style="display: none; margin: 0 0 20px 20px;width: 650px; height: 300px;border: 1px solid #6666dd;">
-       </div>
-
-       <div>
-          <div class="clearfix">
-          <label for="rating">distance: </label>
-            <div class="input">
-             <input type="text" id="distance" name="distance" /> &nbsp; units:
-             <select id="units" name="units">
-              <option value="km">km</option>
-              <option value="miles">miles</option>
-             </select>
-            </div>
-          </div>
-          <div class="actions">
-          <input class="btn primary" id="locate" name="locate" type="submit" 
-          value="Find stores near me" onclick="findLocation();"/>
-        </div>
-        <div id="loc_results">
-        </div>
-       </div>
-    </div>
-
-
-      <p><br/>
-      {% for field in prod_doc.fields %}
-          <b>{{field.name}}</b>:&nbsp;{{field.value}} <br/>
-      {% endfor %}
-        <br/><a href="{{review_link}}">Reviews for {{pname}}</a>
-      </p>
-
-
-    <h4>Create a Review for {{pname}}</h4>
-
-    <form action="/create_review" method="post">
-       <input type="hidden" name="pid" value="{{pid}}" />
-       <input type="hidden" name="category" value="{{category}}" />
-       <input type="hidden" name="pname" value="{{pname}}" />
-       <div class="clearfix">
-        <label for="comment">review comment:</label>
-        <div class="input">
-         <textarea name="comment" rows="3" cols="80">{{comment}}</textarea>
-        </div>
-       </div>
-
-       <div class="clearfix">
-        <label for="rating">rating (1-5):</label>
-        <div class="input">
-         <input type="text" id="rating" name="rating" value="{{rating}}"/>
-        </div>
-       </div>
-
-      <div class="actions">
-       <input class="btn primary" id="subreview" name="subreview" type="submit" value="Review"/>
-       <input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
-      </div>
-    </form>
-
-  {% if user_is_admin %}
-  <p>Delete this product and its reviews; no undo (admin).</p>
-  <form action="/admin/delete_product" method="post">
-    <input type="hidden" name="pid" value="{{pid}}" />
-    <div class="actions">
-     <input class="btn primary" id="delete_prod" name="delete_prod" type="submit" value="Delete Product"/>
-    </div>
-  </form>
-  {% endif %}
-
  {% endblock %}
