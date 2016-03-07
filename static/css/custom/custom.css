@@ -1,0 +1,16 @@
+.content {
+	padding: 30px;
+}
+
+.input {
+	margin: 5px;
+}
+
+article {
+	background-color: rgb(242, 242, 242);
+	padding: 30px;
+	margin: 30px;
+	border: 1px solid black;
+	border-radius: 20px;
+	box-shadow: 4px 4px 4px #888888;
+}
