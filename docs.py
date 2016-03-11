@@ -145,7 +145,7 @@ class Product(BaseDocumentManager):
   """Provides helper methods to manage Product documents.  All Product documents
   built using these methods will include a core set of fields (see the
   _buildCoreProductFields method).  We use the given product id (the Product
-  entity key) as the post_id.  This is not required for the entity/document
+  entity key) as the doc_id.  This is not required for the entity/document
   design-- each explicitly point to each other, allowing their ids to be
   decoupled-- but using the product id as the doc id allows a document to be
   reindexed given its product info, without having to fetch the
@@ -433,7 +433,7 @@ class Product(BaseDocumentManager):
     # check for the fields that are always required.
     if pid and category and name:
       # First, check that the given pid has only visible ascii characters,
-      # and does not contain whitespace.  The pid will be used as the post_id,
+      # and does not contain whitespace.  The pid will be used as the doc_id,
       # which has these requirements.
       if not cls.isValidDocId(pid):
         raise errors.OperationFailedError("Illegal pid %s" % pid)
@@ -443,7 +443,7 @@ class Product(BaseDocumentManager):
           description=description,
           category_name=category_name, price=price, **params)
       # build and index the document.  Use the pid (product id) as the doc id.
-      # (If we did not do this, and left the post_id unspecified, an id would be
+      # (If we did not do this, and left the doc_id unspecified, an id would be
       # auto-generated.)
       d = search.Document(doc_id=pid, fields=resfields)
       return d
@@ -490,7 +490,7 @@ class Product(BaseDocumentManager):
         params = cls._normalizeParams(row)
         doc = cls._createDocument(**params)
         docs.append(doc)
-        # create product entity, sans post_id
+        # create product entity, sans doc_id
         dbp = models.Product(
             id=params['pid'], price=params['price_per_day'],
             category=params['category'])

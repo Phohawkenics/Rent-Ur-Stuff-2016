@@ -23,6 +23,8 @@ from google.appengine.api import search
 televisions = {'name': 'hd televisions', 'children': []}
 books = {'name': 'books', 'children': []}
 
+
+
 ctree =  {'name': 'root', 'children': [books, televisions]}
 
 # [The core fields that all products share are: product id, name, description,

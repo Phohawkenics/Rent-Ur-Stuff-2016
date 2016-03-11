@@ -32,6 +32,22 @@ import docs
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
 
+#Users
+#user_id (PK): int	display_name: String	email: String	phone_number: String	address: String
+
+
+#Posts
+#doc_id (PK): int	user_id: int	location: String	title	description	category	price_per_day	start_date	end_date	image_url	phone_number	address	is_available
+
+
+
+
+
+#Transactions
+#transaction_id (PK)	owner_id	lender_id	start_date	end_date
+
+
+
 
 class Category(ndb.Model):
   """The model class for product category information.  Supports building a
@@ -104,7 +120,7 @@ class Product(ndb.Model):
   all of the fields in its corresponding indexed product document, only 'core'
   fields."""
 
-  post_id = ndb.StringProperty()  # the id of the associated product
+  doc_id = ndb.StringProperty()  # the id of the associated product
   user_id = ndb.IntegerProperty()
   location = ndb.StringProperty()
   price_per_day = ndb.FloatProperty()
@@ -122,7 +138,7 @@ class Product(ndb.Model):
   # indicates whether the associated document needs to be re-indexed due to a
   # change in the average review rating.
   needs_review_reindex = ndb.BooleanProperty(default=False)
-
+  
   @property
   def pid(self):
     return self.key.id()
@@ -164,7 +180,7 @@ class Product(ndb.Model):
   @classmethod
   def create(cls, params, doc_id):
     """Create a new product entity from a subset of the given params dict
-    values, and the given post_id."""
+    values, and the given doc_id."""
     prod = cls(
         id=params['pid'], price=params['price_per_day'],
         category=params['category'], doc_id=doc_id)
@@ -172,7 +188,7 @@ class Product(ndb.Model):
     return prod
 
   def update_core(self, params, doc_id):
-    """Update 'core' values from the given params dict and post_id."""
+    """Update 'core' values from the given params dict and doc_id."""
     self.populate(
         price=params['price_per_day'], category=params['category'],
         doc_id=doc_id)
@@ -193,6 +209,8 @@ class Product(ndb.Model):
     # update the associated document with the new ratings info
     # and reindex
     docs.Product.updateRatingsInfo(doc_id, avg_rating)
+
+
 
 
 class Review(ndb.Model):
