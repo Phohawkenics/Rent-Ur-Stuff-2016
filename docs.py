@@ -145,7 +145,7 @@ class Product(BaseDocumentManager):
   """Provides helper methods to manage Product documents.  All Product documents
   built using these methods will include a core set of fields (see the
   _buildCoreProductFields method).  We use the given product id (the Product
-  entity key) as the doc_id.  This is not required for the entity/document
+  entity key) as the post_id.  This is not required for the entity/document
   design-- each explicitly point to each other, allowing their ids to be
   decoupled-- but using the product id as the doc id allows a document to be
   reindexed given its product info, without having to fetch the
@@ -158,7 +158,7 @@ class Product(BaseDocumentManager):
   DESCRIPTION = 'description'
   CATEGORY = 'category'
   PRODUCT_NAME = 'name'
-  PRICE = 'price'
+  PRICE = 'price_per_day'
   AVG_RATING = 'ar' #average rating
   UPDATED = 'modified'
 
@@ -166,14 +166,14 @@ class Product(BaseDocumentManager):
         [AVG_RATING, 'average rating', search.SortExpression(
             expression=AVG_RATING,
             direction=search.SortExpression.DESCENDING, default_value=0)],
-        [PRICE, 'price', search.SortExpression(
+        [PRICE, 'price_per_day', search.SortExpression(
             # other examples:
-            # expression='max(price, 14.99)'
+            # expression='max(price_per_day, 14.99)'
             # If you access _score in your sort expressions,
             # your SortOptions should include a scorer.
             # e.g. search.SortOptions(match_scorer=search.MatchScorer(),...)
             # Then, you can access the score to build expressions like:
-            # expression='price * _score'
+            # expression='price_per_day * _score'
             expression=PRICE,
             direction=search.SortExpression.ASCENDING, default_value=9999)],
         [UPDATED, 'modified', search.SortExpression(
@@ -288,7 +288,7 @@ class Product(BaseDocumentManager):
     return self.setFirstField(search.NumberField(name=self.AVG_RATING, value=ar))
 
   def getPrice(self):
-    """Get the value of the 'price' field of a Product doc."""
+    """Get the value of the 'price_per_day' field of a Product doc."""
     return self.getFieldVal(self.PRICE)
 
   @classmethod
@@ -433,7 +433,7 @@ class Product(BaseDocumentManager):
     # check for the fields that are always required.
     if pid and category and name:
       # First, check that the given pid has only visible ascii characters,
-      # and does not contain whitespace.  The pid will be used as the doc_id,
+      # and does not contain whitespace.  The pid will be used as the post_id,
       # which has these requirements.
       if not cls.isValidDocId(pid):
         raise errors.OperationFailedError("Illegal pid %s" % pid)
@@ -443,7 +443,7 @@ class Product(BaseDocumentManager):
           description=description,
           category_name=category_name, price=price, **params)
       # build and index the document.  Use the pid (product id) as the doc id.
-      # (If we did not do this, and left the doc_id unspecified, an id would be
+      # (If we did not do this, and left the post_id unspecified, an id would be
       # auto-generated.)
       d = search.Document(doc_id=pid, fields=resfields)
       return d
@@ -461,9 +461,9 @@ class Product(BaseDocumentManager):
       params['category_name'] = params['category']
       params['category'] = params['category']
       try:
-        params['price'] = float(params['price'])
+        params['price_per_day'] = float(params['price_per_day'])
       except ValueError:
-        error_message = 'bad price value: %s' % params['price']
+        error_message = 'bad price_per_day value: %s' % params['price_per_day']
         logging.error(error_message)
         raise errors.OperationFailedError(error_message)
       return params
@@ -490,9 +490,9 @@ class Product(BaseDocumentManager):
         params = cls._normalizeParams(row)
         doc = cls._createDocument(**params)
         docs.append(doc)
-        # create product entity, sans doc_id
+        # create product entity, sans post_id
         dbp = models.Product(
-            id=params['pid'], price=params['price'],
+            id=params['pid'], price=params['price_per_day'],
             category=params['category'])
         dbps.append(dbp)
       except errors.OperationFailedError:

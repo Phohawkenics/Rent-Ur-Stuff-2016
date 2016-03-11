@@ -104,14 +104,21 @@ class Product(ndb.Model):
   all of the fields in its corresponding indexed product document, only 'core'
   fields."""
 
-  doc_id = ndb.StringProperty()  # the id of the associated document
-  price = ndb.FloatProperty()
+  post_id = ndb.StringProperty()  # the id of the associated product
+  user_id = ndb.IntegerProperty()
+  location = ndb.StringProperty()
+  price_per_day = ndb.FloatProperty()
   category = ndb.StringProperty()
   # average rating of the product over all its reviews
   avg_rating = ndb.FloatProperty(default=0)
   # the number of reviews of that product
   num_reviews = ndb.IntegerProperty(default=0)
+  image_url = ndb.StringProperty(default="http:///")
+  phone_number = ndb.StringProperty()
+  adress = ndb.StringProperty()
   active = ndb.BooleanProperty(default=True)
+  start_date = ndb.StringProperty()
+  end_date = ndb.StringProperty()
   # indicates whether the associated document needs to be re-indexed due to a
   # change in the average review rating.
   needs_review_reindex = ndb.BooleanProperty(default=False)
@@ -157,17 +164,17 @@ class Product(ndb.Model):
   @classmethod
   def create(cls, params, doc_id):
     """Create a new product entity from a subset of the given params dict
-    values, and the given doc_id."""
+    values, and the given post_id."""
     prod = cls(
-        id=params['pid'], price=params['price'],
+        id=params['pid'], price=params['price_per_day'],
         category=params['category'], doc_id=doc_id)
     prod.put()
     return prod
 
   def update_core(self, params, doc_id):
-    """Update 'core' values from the given params dict and doc_id."""
+    """Update 'core' values from the given params dict and post_id."""
     self.populate(
-        price=params['price'], category=params['category'],
+        price=params['price_per_day'], category=params['category'],
         doc_id=doc_id)
 
   @classmethod
