@@ -12,7 +12,22 @@
     <div class="row">
 		<h4>Product</h4>
 		<form class="form-horizontal" action="/admin/create_product" method="post">
-			<input type="hidden" name="category" value="books" />
+			<!--<input type="hidden" name="category" value="books" /> -->
+			<div class="form-group col-sm-6 col-md-4  col-lg-3">
+				<label for="category">Category</label>
+				<div class="input">
+					<select class="form-control" id="category" name="category">
+						<option value="">Any Category</option>
+						{% for cat in cat_info %}
+						{% if cat.0 == pcategory %}
+						<option value="{{cat.0}}" selected="selected">{{cat.1}}</option>
+						{% else %}
+						<option value="{{cat.0}}">{{cat.1}}</option>
+						{% endif %}
+						{% endfor %}
+					</select>
+				</div>
+			</div>
 			<div class="form-group col-sm-6 col-md-4  col-lg-3">
 				<label for="pid">Product ID:</label>
 				<div class="input">
@@ -31,34 +46,56 @@
 					<input class="form-control" type="text" id="price" name="price" value="{{price}}"/>
 				</div>
 			</div>
-			<div class="form-group col-sm-6 col-md-4  col-lg-3">
-				<label for="isbn">ISBN:</label>
-				<div class="input">
-					<input class="form-control" type="text" id="isbn" name="isbn" value="{{isbn}}"/>
+			<div id="books">
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="isbn">ISBN:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="isbn" name="isbn" value="{{isbn}}"/>
+					</div>
+				</div>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="pages">Pages:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="pages" name="pages" value="{{pages}}"/>
+					</div>
+				</div>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="publisher">Publisher:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="publisher" name="publisher" value="{{publisher}}"/>
+					</div>
+				</div>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="author">Author:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="author" name="author" value="{{author}}"/>
+					</div>
+				</div>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="title">Title:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="title" name="title" value="{{title}}"/>
+					</div>
 				</div>
 			</div>
-			<div class="form-group col-sm-6 col-md-4  col-lg-3">
-				<label for="pages">Pages:</label>
-				<div class="input">
-					<input class="form-control" type="text" id="pages" name="pages" value="{{pages}}"/>
+			<div id="television">
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="size">Size:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="size" name="size" value="{{size}}"/>
+					</div>
 				</div>
-			</div>
-			<div class="form-group col-sm-6 col-md-4  col-lg-3">
-				<label for="publisher">Publisher:</label>
-				<div class="input">
-					<input class="form-control" type="text" id="publisher" name="publisher" value="{{publisher}}"/>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="brand">Brand:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="brand" name="brand" value="{{brand}}"/>
+					</div>
 				</div>
-			</div>
-			<div class="form-group col-sm-6 col-md-4  col-lg-3">
-				<label for="author">Author:</label>
-				<div class="input">
-					<input class="form-control" type="text" id="author" name="author" value="{{author}}"/>
-				</div>
-			</div>
-			<div class="form-group col-sm-6 col-md-4  col-lg-3">
-				<label for="title">Title:</label>
-				<div class="input">
-					<input class="form-control" type="text" id="title" name="title" value="{{title}}"/>
+				<div class="form-group col-sm-6 col-md-4  col-lg-3">
+					<label for="tv_type">TV Type:</label>
+					<div class="input">
+						<input class="form-control" type="text" id="tv_type" name="tv_type" value="{{tv_type}}"/>
+					</div>
 				</div>
 			</div>
 			<div class="form-group col-sm-12 col-md-12 col-lg-12">
@@ -68,11 +105,27 @@
 				</div>
 			</div>
 			<div class="actions form-group col-sm-12 col-md-12 col-lg-12">
-				<input class="btn primary" id="subreview" name="subreview" type="submit" value="Create"/>
-				<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
+					<input class="btn primary" id="subreview" name="subreview" type="submit" value="Create"/>
+					<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
 			</div>
 		</form>
 		</div>
     </div> <!-- end row -->
+    <script>
+    	$( document ).ready(function() {
+    		$('#books').hide();
+    		$('#television').hide();
+
+		    $('#category').on('change', function() {
+			  if (this.value == 'books') {
+			  	$('#books').show();
+			  	$('#television').hide();
+			  } else if (this.value == 'hd televisions') {
+			  	$('#books').hide();
+			  	$('#television').show();
+			  }
+			});
+		});
+    </script>
 {% endblock %}
 
