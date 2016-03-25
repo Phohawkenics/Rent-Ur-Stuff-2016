@@ -232,7 +232,6 @@ class CreateProductHandler(BaseHandler):
 
   def parseParams(self):
     """Filter the param set to the expected params."""
-
     pid = self.request.get('pid')
     doc = docs.Product.getDocFromPid(pid)
     params = {}
@@ -247,7 +246,9 @@ class CreateProductHandler(BaseHandler):
           'name': '',
           'description': '',
           'category': '',
-          'price': ''}
+          'price': '',
+          'cat_info': models.Category.getCategoryInfo()
+          }
       pf = categories.product_dict
       # add the fields specific to the categories
       for _, cdict in pf.iteritems():
@@ -273,7 +274,6 @@ class CreateProductHandler(BaseHandler):
   def createProduct(self, params):
     """Create a product entity and associated document from the given params
     dict."""
-
     try:
       product = docs.Product.buildProduct(params)
       self.redirect(
