@@ -158,7 +158,7 @@ class Product(BaseDocumentManager):
   DESCRIPTION = 'description'
   CATEGORY = 'category'
   PRODUCT_NAME = 'name'
-  PRICE = 'price_per_day'
+  PRICE = 'price'
   AVG_RATING = 'ar' #average rating
   UPDATED = 'modified'
 
@@ -166,14 +166,14 @@ class Product(BaseDocumentManager):
         [AVG_RATING, 'average rating', search.SortExpression(
             expression=AVG_RATING,
             direction=search.SortExpression.DESCENDING, default_value=0)],
-        [PRICE, 'price_per_day', search.SortExpression(
+        [PRICE, 'price', search.SortExpression(
             # other examples:
-            # expression='max(price_per_day, 14.99)'
+            # expression='max(price, 14.99)'
             # If you access _score in your sort expressions,
             # your SortOptions should include a scorer.
             # e.g. search.SortOptions(match_scorer=search.MatchScorer(),...)
             # Then, you can access the score to build expressions like:
-            # expression='price_per_day * _score'
+            # expression='price * _score'
             expression=PRICE,
             direction=search.SortExpression.ASCENDING, default_value=9999)],
         [UPDATED, 'modified', search.SortExpression(
@@ -288,7 +288,7 @@ class Product(BaseDocumentManager):
     return self.setFirstField(search.NumberField(name=self.AVG_RATING, value=ar))
 
   def getPrice(self):
-    """Get the value of the 'price_per_day' field of a Product doc."""
+    """Get the value of the 'price' field of a Product doc."""
     return self.getFieldVal(self.PRICE)
 
   @classmethod
@@ -461,9 +461,9 @@ class Product(BaseDocumentManager):
       params['category_name'] = params['category']
       params['category'] = params['category']
       try:
-        params['price_per_day'] = float(params['price_per_day'])
+        params['price'] = float(params['price'])
       except ValueError:
-        error_message = 'bad price_per_day value: %s' % params['price_per_day']
+        error_message = 'bad price value: %s' % params['price']
         logging.error(error_message)
         raise errors.OperationFailedError(error_message)
       return params
@@ -492,7 +492,7 @@ class Product(BaseDocumentManager):
         docs.append(doc)
         # create product entity, sans doc_id
         dbp = models.Product(
-            id=params['pid'], price=params['price_per_day'],
+            id=params['pid'], price=params['price'],
             category=params['category'])
         dbps.append(dbp)
       except errors.OperationFailedError:

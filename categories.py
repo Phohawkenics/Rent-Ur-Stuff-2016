@@ -28,7 +28,7 @@ books = {'name': 'books', 'children': []}
 ctree =  {'name': 'root', 'children': [books, televisions]}
 
 # [The core fields that all products share are: product id, name, description,
-# category, category name, and price_per_day]
+# category, category name, and price]
 # Define the non-'core' (differing) product fields for each category
 # above, and their types.
 product_dict =  {'hd televisions': {'size': search.NumberField,

@@ -69,7 +69,7 @@ def reinitAll(sample_data=True):
     # books
     reader = csv.DictReader(
         open(datafile, 'r'),
-        ['pid', 'name', 'category', 'price_per_day',
+        ['pid', 'name', 'category', 'price',
          'publisher', 'title', 'pages', 'author',
          'description', 'isbn'])
     importData(reader)
@@ -77,7 +77,7 @@ def reinitAll(sample_data=True):
     # tvs
     reader = csv.DictReader(
         open(datafile, 'r'),
-        ['pid', 'name', 'category', 'price_per_day',
+        ['pid', 'name', 'category', 'price',
          'size', 'brand', 'tv_type',
          'description'])
     importData(reader)
@@ -156,7 +156,7 @@ class AdminHandler(BaseHandler):
       datafile = os.path.join('data', config.DEMO_UPDATE_BOOKS_DATA)
       reader = csv.DictReader(
           open(datafile, 'r'),
-          ['pid', 'name', 'category', 'price_per_day',
+          ['pid', 'name', 'category', 'price',
            'publisher', 'title', 'pages', 'author',
            'description', 'isbn'])
       for row in reader:
@@ -247,7 +247,7 @@ class CreateProductHandler(BaseHandler):
           'name': '',
           'description': '',
           'category': '',
-          'price_per_day': ''}
+          'price': ''}
       pf = categories.product_dict
       # add the fields specific to the categories
       for _, cdict in pf.iteritems():

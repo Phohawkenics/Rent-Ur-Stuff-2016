@@ -112,7 +112,7 @@ class FTSTestCase(unittest.TestCase):
 
     # make sure that a product entity is stored in Datastore
     self.assert_(product is not None)
-    self.assertEqual(product.price, PRODUCT_PARAMS['price_per_day'])
+    self.assertEqual(product.price, PRODUCT_PARAMS['price'])
 
     # make sure the search actually works
     sq = search.Query(query_string='Sir Arthur Conan Doyle')

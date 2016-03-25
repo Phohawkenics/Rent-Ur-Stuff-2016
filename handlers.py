@@ -319,11 +319,11 @@ class ProductSearchHandler(BaseHandler):
       for expr in doc.expressions:
         if expr.name == docs.Product.DESCRIPTION:
           description_snippet = expr.value
-        # uncomment to use 'adjusted price_per_day', which should be
+        # uncomment to use 'adjusted price', which should be
         # defined in returned_expressions in _buildQuery() below, as the
-        # displayed price_per_day.
+        # displayed price.
         # elif expr.name == 'adjusted_price':
-          # price_per_day = expr.value
+          # price = expr.value
 
       # get field information from the returned doc
       pid = pdoc.getPID()
@@ -367,7 +367,7 @@ class ProductSearchHandler(BaseHandler):
     # computed and returned fields examples.  Their use is not required
     # for the application to function correctly.
     computed_expr = search.FieldExpression(name='adjusted_price',
-        expression='price_per_day * 1.08')
+        expression='price * 1.08')
     returned_fields = [docs.Product.PID, docs.Product.DESCRIPTION,
                 docs.Product.CATEGORY, docs.Product.AVG_RATING,
                 docs.Product.PRICE, docs.Product.PRODUCT_NAME]
@@ -388,7 +388,7 @@ class ProductSearchHandler(BaseHandler):
     else:
       # Otherwise (not sorting on relevance), use the selected field as the
       # first dimension of the sort expression, and the average rating as the
-      # second dimension, unless we're sorting on rating, in which case price_per_day
+      # second dimension, unless we're sorting on rating, in which case price
       # is the second sort dimension.
       # We get the sort direction and default from the 'sort_dict' var.
       if sortq == docs.Product.AVG_RATING:

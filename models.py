@@ -37,7 +37,7 @@ from google.appengine.ext import ndb
 
 
 #Posts
-#doc_id (PK): int	user_id: int	location: String	title	description	category	price_per_day	start_date	end_date	image_url	phone_number	address	is_available
+#doc_id (PK): int	user_id: int	location: String	title	description	category	price	start_date	end_date	image_url	phone_number	address	is_available
 
 
 
@@ -123,7 +123,7 @@ class Product(ndb.Model):
   doc_id = ndb.StringProperty()  # the id of the associated product
   user_id = ndb.IntegerProperty()
   location = ndb.StringProperty()
-  price_per_day = ndb.FloatProperty()
+  price = ndb.FloatProperty()
   category = ndb.StringProperty()
   # average rating of the product over all its reviews
   avg_rating = ndb.FloatProperty(default=0)
@@ -182,7 +182,7 @@ class Product(ndb.Model):
     """Create a new product entity from a subset of the given params dict
     values, and the given doc_id."""
     prod = cls(
-        id=params['pid'], price=params['price_per_day'],
+        id=params['pid'], price=params['price'],
         category=params['category'], doc_id=doc_id)
     prod.put()
     return prod
@@ -190,7 +190,7 @@ class Product(ndb.Model):
   def update_core(self, params, doc_id):
     """Update 'core' values from the given params dict and doc_id."""
     self.populate(
-        price=params['price_per_day'], category=params['category'],
+        price=params['price'], category=params['category'],
         doc_id=doc_id)
 
   @classmethod
