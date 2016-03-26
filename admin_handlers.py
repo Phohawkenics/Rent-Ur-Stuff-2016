@@ -39,7 +39,7 @@ from google.appengine.ext import ndb
 from google.appengine.api import search
 
 
-def reinitAll(sample_data=True):
+def deleteData(sample_data=True):
   """
   Deletes all product entities and documents, essentially resetting the app
   state, then loads in static sample data if requested. Hardwired for the
@@ -48,7 +48,8 @@ def reinitAll(sample_data=True):
   This function is intended to be run 'offline' (e.g., via a Task Queue task).
   As an extension to this functionality, the channel ID could be used to notify
   when done."""
-
+  # also reinstantiate categories list
+  models.Category.deleteCategories()
   # delete all the product and review entities
   review_keys = models.Review.query().fetch(keys_only=True)
   ndb.delete_multi(review_keys)
@@ -58,7 +59,8 @@ def reinitAll(sample_data=True):
   # store indexes
   docs.Product.deleteAllInProductIndex()
   docs.Store.deleteAllInIndex()
-  # load in sample data if indicated
+
+def loadData(sample_data=True):
   if sample_data:
     logging.info('Loading product sample data')
     # Load from csv sample files.
@@ -84,6 +86,8 @@ def reinitAll(sample_data=True):
 
     # next create docs from store location info
     loadStoreLocationData()
+    # next build categories
+    models.Category.buildAllCategories()
 
   logging.info('Re-initialization complete.')
 
@@ -143,10 +147,14 @@ class AdminHandler(BaseHandler):
   @BaseHandler.logged_in
   def get(self):
     action = self.request.get('action')
-    if action == 'reinit':
-      # reinitialise the app data to the sample data
-      defer(reinitAll)
-      self.buildAdminPage(notification="Reinitialization performed.")
+    if action == 'deleteData':
+      # delete data
+      defer(deleteData)
+      self.buildAdminPage(notification="Delete performed.")
+    elif action == 'loadData':
+      # load data
+      defer(loadData)
+      self.buildAdminPage(notification="Load performed.")
     elif action == 'demo_update':
       # update the sample data, from (hardwired) book update
       # data. Demonstrates updating some existing products, and adding some new

@@ -65,10 +65,19 @@ class Category(ndb.Model):
     return self.key.id()
 
   @classmethod
+  def deleteCategories(cls):
+    logging.info("deleteCat()")
+    cats = cls.query().fetch()
+    [c.key.delete() for c in cats]
+    cls._CATEGORY_INFO = None
+    cls._CATEGORY_DICT = None
+    cls._RCATEGORY_DICT = None
+
+  @classmethod
   def buildAllCategories(cls):
     """ build the category instances from the provided static data, if category
     entities do not already exist in the Datastore. (see categories.py)."""
-
+    logging.info("buildCat()")
     # Don't build if there are any categories in the datastore already
     if cls.query().get():
       return
