@@ -111,6 +111,7 @@ class BaseDocumentManager(object):
       response = index.get_range(
           start_id=doc_id, limit=1, include_start_object=True)
       if response.results and response.results[0].doc_id == doc_id:
+        logging.info(response.results[0])
         return response.results[0]
       return None
     except search.InvalidRequest: # catches ill-formed doc ids
@@ -158,6 +159,7 @@ class Product(BaseDocumentManager):
   DESCRIPTION = 'description'
   CATEGORY = 'category'
   PRODUCT_NAME = 'name'
+  IMAGE_URL = 'image_url'
   PRICE = 'price'
   AVG_RATING = 'ar' #average rating
   UPDATED = 'modified'
@@ -279,6 +281,10 @@ class Product(BaseDocumentManager):
     """Set the value of the 'cat' (category) field of a Product doc."""
     return self.setFirstField(search.NumberField(name=self.CATEGORY, value=cat))
 
+  def getImageUrl(self):
+    """Get the value of the 'image_url' field of a Product doc."""
+    return self.getFieldVal(self.IMAGE_URL)
+
   def getAvgRating(self):
     """Get the value of the 'ar' (average rating) field of a Product doc."""
     return self.getFieldVal(self.AVG_RATING)
@@ -348,7 +354,7 @@ class Product(BaseDocumentManager):
 
   @classmethod
   def _buildCoreProductFields(
-      cls, pid, name, description, category, category_name, price):
+      cls, pid, name, description, category, category_name, image_url, price):
     """Construct a 'core' document field list for the fields common to all
     Products. The various categories (as defined in the file 'categories.py'),
     may add additional specialized fields; these will be appended to this
@@ -371,6 +377,7 @@ class Product(BaseDocumentManager):
               search.TextField(
                   name=cls.DESCRIPTION,
                   value=re.sub(r'<[^>]*?>', '', description)),
+              search.TextField(name=cls.IMAGE_URL, value=image_url),
               search.AtomField(name=cls.CATEGORY, value=category),
               search.NumberField(name=cls.AVG_RATING, value=0.0),
               search.NumberField(name=cls.PRICE, value=price)
@@ -379,7 +386,7 @@ class Product(BaseDocumentManager):
 
   @classmethod
   def _buildProductFields(cls, pid=None, category=None, name=None,
-      description=None, category_name=None, price=None, **params):
+      description=None, category_name=None, image_url=None, price=None, **params):
     """Build all the additional non-core fields for a document of the given
     product type (category), using the given params dict, and the
     already-constructed list of 'core' fields.  All such additional
@@ -387,7 +394,7 @@ class Product(BaseDocumentManager):
     """
 
     fields = cls._buildCoreProductFields(
-        pid, name, description, category, category_name, price)
+        pid, name, description, category, category_name, image_url, price)
     # get the specification of additional (non-'core') fields for this category
     pdict = categories.product_dict.get(category_name)
     if pdict:
@@ -428,7 +435,7 @@ class Product(BaseDocumentManager):
   @classmethod
   def _createDocument(
       cls, pid=None, category=None, name=None, description=None,
-      category_name=None, price=None, **params):
+      category_name=None, image_url=None, price=None, **params):
     """Create a Document object from given params."""
     # check for the fields that are always required.
     if pid and category and name:
@@ -441,7 +448,7 @@ class Product(BaseDocumentManager):
       resfields = cls._buildProductFields(
           pid=pid, category=category, name=name,
           description=description,
-          category_name=category_name, price=price, **params)
+          category_name=category_name, image_url=image_url, price=price, **params)
       # build and index the document.  Use the pid (product id) as the doc id.
       # (If we did not do this, and left the doc_id unspecified, an id would be
       # auto-generated.)
@@ -456,10 +463,13 @@ class Product(BaseDocumentManager):
 
     params = copy.deepcopy(params)
     try:
+      logging.info('normalize')
+      logging.info(params)
       params['pid'] = params['pid'].strip()
       params['name'] = params['name'].strip()
       params['category_name'] = params['category']
       params['category'] = params['category']
+      params['image_url'] = params['image_url']
       try:
         params['price'] = float(params['price'])
       except ValueError:
@@ -520,6 +530,7 @@ class Product(BaseDocumentManager):
     product id and the field values are taken from the params dict.
     """
     params = cls._normalizeParams(params)
+    logging.info(params)
     # check to see if doc already exists.  We do this because we need to retain
     # some information from the existing doc.  We could skip the fetch if this
     # were not the case.
@@ -530,6 +541,7 @@ class Product(BaseDocumentManager):
       cls(d).setAvgRating(avg_rating)
 
     # This will reindex if a doc with that doc id already exists
+    logging.info(d)
     doc_ids = cls.add(d)
     try:
       doc_id = doc_ids[0].id

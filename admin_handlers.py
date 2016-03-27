@@ -254,6 +254,7 @@ class CreateProductHandler(BaseHandler):
           'name': '',
           'description': '',
           'category': '',
+          'image_url': '',
           'price': '',
           'cat_info': models.Category.getCategoryInfo()
           }
@@ -282,6 +283,7 @@ class CreateProductHandler(BaseHandler):
   def createProduct(self, params):
     """Create a product entity and associated document from the given params
     dict."""
+
     try:
       product = docs.Product.buildProduct(params)
       self.redirect(

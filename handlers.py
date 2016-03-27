@@ -43,7 +43,7 @@ class IndexHandler(BaseHandler):
     sort_info = docs.Product.getSortMenu()
     template_values = {
         'cat_info': cat_info,
-        'sort_info': sort_info,
+        'sort_info': sort_info
         }
     self.render_template('index.html', template_values)
 
@@ -60,11 +60,14 @@ class ShowProductHandler(BaseHandler):
         'pname': '',
         'comment': '',
         'rating': '',
-        'category': ''
+        'category': '',
+        'image_url': ''
     }
     for k, v in params.iteritems():
       # Possibly replace default values.
       params[k] = self.request.get(k, v)
+
+    logging.info(params)
     return params
 
   def get(self):
@@ -85,6 +88,7 @@ class ShowProductHandler(BaseHandler):
            'goto_url': url, 'linktext': linktext})
       return
     doc = docs.Product.getDocFromPid(pid)
+    logging.info(doc)
     if not doc:
       error_message = ('Document not found for pid %s.' % pid)
       return self.abort(404, error_message)
@@ -101,9 +105,12 @@ class ShowProductHandler(BaseHandler):
         'comment': params['comment'],
         'rating': params['rating'],
         'category': pdoc.getCategory(),
+        'image_url': pdoc.getImageUrl(),
         'prod_doc': doc,
         # for this demo, 'admin' status simply equates to being logged in
         'user_is_admin': users.get_current_user()}
+    logging.info('template_values :')
+    logging.info(template_values)
     self.render_template('product.html', template_values)
 
 
@@ -370,7 +377,7 @@ class ProductSearchHandler(BaseHandler):
         expression='price * 1.08')
     returned_fields = [docs.Product.PID, docs.Product.DESCRIPTION,
                 docs.Product.CATEGORY, docs.Product.AVG_RATING,
-                docs.Product.PRICE, docs.Product.PRODUCT_NAME]
+                docs.Product.PRICE, docs.Product.IMAGE_URL, docs.Product.PRODUCT_NAME]
 
     if sortq == 'relevance':
       # If sorting on 'relevance', use the Match scorer.
