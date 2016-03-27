@@ -15,13 +15,13 @@
 {% block content %}
 	<h2>Product Information for {{pname}}</h2>
 	<div class="row col-md-12 col-lg-12">
-		<div><img class="form-group col-md-6 col-lg-6" id="image_url" name="image_url" src="{{image_url}}" atl="image">
+		<div class="form-group col-md-6 col-lg-6 productImage"><img src="{{image_url}}" atl="image">
 
 		</div>
 		<div class="form-group col-md-6 col-lg-6">
 			<p>
 				<br/>{% for field in prod_doc.fields %}
-				<b>{{field.name}}</b>:&nbsp;{{field.value}} <br/>
+				<span class="{{field.name}}"><b>{{field.name}}</b>:&nbsp;{{field.value}}</span> <br/>
 				{% endfor %}
 				<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
 			</p>

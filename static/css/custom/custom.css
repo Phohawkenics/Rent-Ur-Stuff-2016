@@ -14,3 +14,16 @@ article {
 	border-radius: 20px;
 	box-shadow: 4px 4px 4px #888888;
 }
+
+.search-result .row {
+	max-height: 500px;
+}
+
+.productImage {
+	text-align: center;
+}
+
+.productImage img {
+	max-height: 300px;
+	max-width: 400px;
+}

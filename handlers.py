@@ -321,6 +321,7 @@ class ProductSearchHandler(BaseHandler):
       # use the description field as the default description snippet, since
       # snippeting is not supported on the dev app server.
       description_snippet = pdoc.getDescription()
+      image_url = pdoc.getImageUrl()
       price = pdoc.getPrice()
       # on the dev app server, the doc.expressions property won't be populated.
       for expr in doc.expressions:
@@ -341,7 +342,7 @@ class ProductSearchHandler(BaseHandler):
       # pass to the template renderer
       psearch_response.append(
           [doc, urllib.quote_plus(pid), cat,
-           description_snippet, price, pname, catname, avg_rating])
+           description_snippet, price, pname, catname, avg_rating, image_url])
     if not query:
       print_query = 'All'
     else:
