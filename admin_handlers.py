@@ -128,7 +128,23 @@ def importData(reader):
   if rows:
     docs.Product.buildProductBatch(rows)
 
+class UserProfileHandler(BaseHandler):
+  """Displays the admin page."""
 
+  def buildUserProfilePage(self, notification=None):
+    tdict = {
+        'sampleb': config.SAMPLE_DATA_BOOKS,
+        'samplet': config.SAMPLE_DATA_TVS,
+        'update_sample': config.DEMO_UPDATE_BOOKS_DATA}
+    if notification:
+      tdict['notification'] = notification
+    self.render_template('user_profile.html', tdict)
+    
+  @BaseHandler.logged_in
+  def get(self):
+    action = self.request.get('action')
+    self.buildUserProfilePage()
+  
 class AdminHandler(BaseHandler):
   """Displays the admin page."""
 

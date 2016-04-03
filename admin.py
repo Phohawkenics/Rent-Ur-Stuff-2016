@@ -25,7 +25,8 @@ application = webapp2.WSGIApplication(
     [
         ('/admin/manage', AdminHandler),
         ('/admin/create_product', CreateProductHandler),
-        ('/admin/delete_product', DeleteProductHandler)
+        ('/admin/delete_product', DeleteProductHandler),
+        ('/admin/user_profile', UserProfileHandler)
     ],
     debug=True)
 

@@ -73,6 +73,14 @@ class BaseHandler(webapp2.RequestHandler):
     else:
       return (None, None)
 
+  def getUserProfileLink(self):
+    """Build link to the admin management page, if the user is logged in."""
+    if users.get_current_user():
+      user_profile_url = '/admin/user_profile'
+      return (user_profile_url, 'Profile')
+    else:
+      return (None, None)
+
   def createProductAdminLink(self):
     if users.get_current_user():
       admin_create_url = '/admin/create_product'
@@ -87,12 +95,15 @@ class BaseHandler(webapp2.RequestHandler):
     url, url_linktext = self.getLoginLink()
     admin_create_url, admin_create_text = self.createProductAdminLink()
     admin_url, admin_text = self.getAdminManageLink()
+    admin_user_profile_url, admin_user_profile_text = self.getUserProfileLink()
     return {
         'admin_create_url': admin_create_url,
         'admin_create_text': admin_create_text,
         'admin_url': admin_url,
         'admin_text': admin_text,
         'url': url,
-        'url_linktext': url_linktext
+        'url_linktext': url_linktext,
+        'admin_user_profile_url': admin_user_profile_url,
+        'admin_user_profile_text': admin_user_profile_text
         }
 

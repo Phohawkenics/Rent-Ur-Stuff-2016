@@ -29,6 +29,11 @@
 							<a href="{{admin_url}}"> <i class=" glyphicon glyphicon-random"></i> {{admin_text}}</a>
 						</li>
 						{% endif %}
+						{% if admin_user_profile_url %}
+						<li class="col-xs-4 col-sm-4 col-md-12 col-lg-12">
+							<a href="{{admin_user_profile_url}}"> <i class=" glyphicon glyphicon-random"></i> {{admin_user_profile_text}}</a>
+						</li>
+						{% endif %}
 						{% if admin_create_url %}
 						<li class="col-xs-4 col-sm-4 col-md-12 col-lg-12">
 							<a href="{{admin_create_url}}"> <i class="glyphicon glyphicon-plus"></i> {{admin_create_text}}</a>
