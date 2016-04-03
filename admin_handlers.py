@@ -129,7 +129,7 @@ def importData(reader):
     docs.Product.buildProductBatch(rows)
 
 class UserProfileHandler(BaseHandler):
-  """Displays the admin page."""
+  """Displays the user page."""
 
   def buildUserProfilePage(self, notification=None):
     tdict = {
@@ -139,12 +139,22 @@ class UserProfileHandler(BaseHandler):
     if notification:
       tdict['notification'] = notification
     self.render_template('user_profile.html', tdict)
-    
+
   @BaseHandler.logged_in
   def get(self):
     action = self.request.get('action')
-    self.buildUserProfilePage()
-  
+    if action == 'Update':
+      # update data
+      defer(deleteData)
+      self.buildUserProfilePage(notification="Profile Updated.")
+    elif action == 'Clear':
+      # load data
+      defer(ClearProfile)
+      self.buildUserProfilePage(notification="Profile Reset.")
+    else:
+      self.buildUserProfilePage()
+
+
 class AdminHandler(BaseHandler):
   """Displays the admin page."""
 
@@ -268,6 +278,7 @@ class CreateProductHandler(BaseHandler):
       params = {
           'pid': uuid.uuid4().hex,  # auto-generate default UID
           'name': '',
+          'user_id': users.get_current_user().user_id(), #give id automatically to product
           'description': '',
           'category': '',
           'image_url': '',

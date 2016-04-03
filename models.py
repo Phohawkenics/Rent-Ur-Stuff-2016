@@ -47,8 +47,6 @@ from google.appengine.ext import ndb
 #transaction_id (PK)	owner_id	lender_id	start_date	end_date
 
 
-
-
 class Category(ndb.Model):
   """The model class for product category information.  Supports building a
   category tree."""
@@ -130,7 +128,7 @@ class Product(ndb.Model):
   fields."""
 
   doc_id = ndb.StringProperty()  # the id of the associated product
-  user_id = ndb.IntegerProperty()
+  user_id = ndb.UserProperty()
   location = ndb.StringProperty()
   price = ndb.FloatProperty()
   category = ndb.StringProperty()
@@ -243,3 +241,20 @@ class Review(ndb.Model):
     reviews = cls.query(
         cls.product_key == ndb.Key(Product, pid)).fetch(keys_only=True)
     return ndb.delete_multi(reviews)
+
+class UserInfo(ndb.Model):
+  # Keyed by user_id
+  doc_id = ndb.StringProperty()
+
+  nickname = ndb.StringProperty()
+  email = ndb.StringProperty()
+  phoneNumber = ndb.StringProperty()
+  meetPoint = ndb.StringProperty()
+
+class UsersProducts(ndb.Model):
+  product = ndb.KeyProperty(kind=Product, required=True)
+  user_id = ndb.StringProperty(required=True)
+
+  @classmethod
+  def get_by(cls, user_id, product_key):
+    return cls.query(cls.user_id == user_id, cls.product == product_key).get()

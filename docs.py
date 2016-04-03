@@ -163,7 +163,7 @@ class Product(BaseDocumentManager):
   PRICE = 'price'
   AVG_RATING = 'ar' #average rating
   UPDATED = 'modified'
-
+  USER_ID = 'user_id'
   _SORT_OPTIONS = [
         [AVG_RATING, 'average rating', search.SortExpression(
             expression=AVG_RATING,
@@ -297,6 +297,11 @@ class Product(BaseDocumentManager):
     """Get the value of the 'price' field of a Product doc."""
     return self.getFieldVal(self.PRICE)
 
+  def getUserId(self):
+    """Get the value of the 'ar' (average rating) field of a Product doc."""
+    return self.getFieldVal(self.USER_ID)
+
+
   @classmethod
   def generateRatingsBuckets(cls, query_string):
     """Builds a dict of ratings 'buckets' and their counts, based on the
@@ -354,7 +359,7 @@ class Product(BaseDocumentManager):
 
   @classmethod
   def _buildCoreProductFields(
-      cls, pid, name, description, category, category_name, image_url, price):
+      cls, pid, name, user_id, description, category, category_name, image_url, price):
     """Construct a 'core' document field list for the fields common to all
     Products. The various categories (as defined in the file 'categories.py'),
     may add additional specialized fields; these will be appended to this
@@ -364,6 +369,7 @@ class Product(BaseDocumentManager):
               search.DateField(name=cls.UPDATED,
                   value=datetime.datetime.now().date()),
               search.TextField(name=cls.PRODUCT_NAME, value=name),
+              search.TextField(name=cls.USER_ID,value=user_id),
               # strip the markup from the description value, which can
               # potentially come from user input.  We do this so that
               # we don't need to sanitize the description in the
@@ -385,8 +391,8 @@ class Product(BaseDocumentManager):
     return fields
 
   @classmethod
-  def _buildProductFields(cls, pid=None, category=None, name=None,
-      description=None, category_name=None, image_url=None, price=None, **params):
+  def _buildProductFields(cls, pid=None, category=None, name=None, user_id=None,
+                          description=None, category_name=None, image_url=None, price=None, **params):
     """Build all the additional non-core fields for a document of the given
     product type (category), using the given params dict, and the
     already-constructed list of 'core' fields.  All such additional
@@ -394,7 +400,7 @@ class Product(BaseDocumentManager):
     """
 
     fields = cls._buildCoreProductFields(
-        pid, name, description, category, category_name, image_url, price)
+        pid, name, user_id, description, category, category_name, image_url, price)
     # get the specification of additional (non-'core') fields for this category
     pdict = categories.product_dict.get(category_name)
     if pdict:
@@ -434,11 +440,11 @@ class Product(BaseDocumentManager):
 
   @classmethod
   def _createDocument(
-      cls, pid=None, category=None, name=None, description=None,
+      cls, pid=None, category=None, name=None, user_id=None, description=None,
       category_name=None, image_url=None, price=None, **params):
     """Create a Document object from given params."""
     # check for the fields that are always required.
-    if pid and category and name:
+    if pid and category and name and user_id:
       # First, check that the given pid has only visible ascii characters,
       # and does not contain whitespace.  The pid will be used as the doc_id,
       # which has these requirements.
@@ -447,6 +453,7 @@ class Product(BaseDocumentManager):
       # construct the document fields from the params
       resfields = cls._buildProductFields(
           pid=pid, category=category, name=name,
+          user_id=user_id,
           description=description,
           category_name=category_name, image_url=image_url, price=price, **params)
       # build and index the document.  Use the pid (product id) as the doc id.
@@ -467,6 +474,7 @@ class Product(BaseDocumentManager):
       logging.info(params)
       params['pid'] = params['pid'].strip()
       params['name'] = params['name'].strip()
+      params['user_id'] = params['user_id']
       params['category_name'] = params['category']
       params['category'] = params['category']
       params['image_url'] = params['image_url']
