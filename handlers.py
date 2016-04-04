@@ -123,8 +123,8 @@ class CreateReviewHandler(BaseHandler):
     params = {
         'pid': '',
         'pname': '',
-        'comment': 'this is a great product',
-        'rating': '5',
+        'comment': '',
+        'rating': '',
         'category': ''
     }
     for k, v in params.iteritems():

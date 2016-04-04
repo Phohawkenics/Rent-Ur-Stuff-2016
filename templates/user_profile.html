@@ -5,11 +5,14 @@
 
 {% block content %}
     <h3>My Profile</h3>
+    {% if notification %}
+   		<p><b>Notification</b>: {{notification}}</p>
+   	{% endif %}
     {% if error_message %}
       <p><b>Error</b>: {{error_message}}</p>
     {% endif %}
     <div class="row">
-		<form class="form-horizontal" action="/admin/update_profile" method="post">
+		<form class="form-horizontal" action="/admin/user_profile" method="post">
 			<div class="form-group col-sm-6 col-md-4  col-lg-3">
 				<label for="nickname">Nickname:</label>
 				<div class="input">
@@ -35,7 +38,7 @@
 				</div>
 			</div>
 			<div class="actions form-group col-sm-12 col-md-12 col-lg-12">
-					<input class="btn primary" id="subreview" name="subreview" type="submit" value="Update"/>
+					<input class="btn primary" type="submit" value="Update"/>
 					<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
 			</div>
 		</form>
