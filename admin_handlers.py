@@ -132,27 +132,32 @@ class UserProfileHandler(BaseHandler):
   """Displays the user page."""
 
   def buildUserProfilePage(self, notification=None):
-    tdict = {
-        'sampleb': config.SAMPLE_DATA_BOOKS,
-        'samplet': config.SAMPLE_DATA_TVS,
-        'update_sample': config.DEMO_UPDATE_BOOKS_DATA}
+    userInfo = {
+        'user_id': '',
+        'nickname': '',
+        'email': '',
+        'phone_number': '',
+        'meet_loc': ''
+        }
     if notification:
-      tdict['notification'] = notification
-    self.render_template('user_profile.html', tdict)
+      userInfo['notification'] = notification
+    self.render_template('user_profile.html', userInfo)
 
   @BaseHandler.logged_in
   def get(self):
-    action = self.request.get('action')
-    if action == 'Update':
-      # update data
-      defer(deleteData)
-      self.buildUserProfilePage(notification="Profile Updated.")
-    elif action == 'Clear':
-      # load data
-      defer(ClearProfile)
-      self.buildUserProfilePage(notification="Profile Reset.")
-    else:
-      self.buildUserProfilePage()
+    self.buildUserProfilePage()
+
+  def post(self):
+    self.user_profile()
+
+  def user_profile(self):
+    user_id = users.get_current_user().user_id()
+    nickname = self.request.get('nickname')
+    email = self.request.get('email')
+    phone_number = self.request.get('phone_number')
+    meet_loc = self.request.get('meet_loc')
+    
+    self.buildUserProfilePage(notification='Save Successful')
 
 
 class AdminHandler(BaseHandler):
