@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>My Profile</title>
+{% endblock %}
+
+{% block content %}
+    <h3>My Transactions</h3>
+    {% if notification %}
+   		<p><b>Notification</b>: {{notification}}</p>
+   	{% endif %}
+    {% if error_message %}
+      <p><b>Error</b>: {{error_message}}</p>
+    {% endif %}
+		<table class="table table-striped">
+		    <thead>
+		        <tr>
+		            <th>Product</th>
+		            <th>Rentee</th>
+		            <th>Rentee Email</th>
+		            <th>Rentee Phone Number</th>
+		            <th>Meet Point</th>
+		            <th>Pick Up Date</th>
+		            <th>Return Data</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		        <tr>
+		            <td> Product XXXXXXX</td>
+		            <td>John Carter</td>
+		            <td>johncarter@mail.com</td>
+		            <td>514-123-4567</td>
+		            <td>1111 Barclay # 1</td>
+		            <td>20/4/2016</td>
+		            <td>20/4/2016</td>
+		        </tr>
+		        <tr>
+		            <td> Product XXXXXXX</td>
+		            <td>John Carter</td>
+		            <td>johncarter@mail.com</td>
+		            <td>514-123-4567</td>
+		            <td>1111 Barclay # 1</td>
+		            <td>20/4/2016</td>
+		            <td>20/4/2016</td>
+		        </tr>
+		        <tr>
+		            <td> Product XXXXXXX</td>
+		            <td>John Carter</td>
+		            <td>johncarter@mail.com</td>
+		            <td>514-123-4567</td>
+		            <td>1111 Barclay # 1</td>
+		            <td>20/4/2016</td>
+		            <td>20/4/2016</td>
+		        </tr>
+		    </tbody>
+		</table>
+{% endblock %}
+

@@ -31,7 +31,12 @@
 						{% endif %}
 						{% if admin_user_profile_url %}
 						<li class="col-xs-4 col-sm-4 col-md-12 col-lg-12">
-							<a href="{{admin_user_profile_url}}"> <i class=" glyphicon glyphicon-random"></i> {{admin_user_profile_text}}</a>
+							<a href="{{admin_user_profile_url}}"> <i class="glyphicon glyphicon-th-list"></i> {{admin_user_profile_text}}</a>
+						</li>
+						{% endif %}
+						{% if admin_view_transactions_url %}
+						<li class="col-xs-4 col-sm-4 col-md-12 col-lg-12">
+							<a href="{{admin_view_transactions_url}}"> <i class="glyphicon glyphicon-transfer"></i> {{admin_view_transactions_text}}</a>
 						</li>
 						{% endif %}
 						{% if admin_create_url %}

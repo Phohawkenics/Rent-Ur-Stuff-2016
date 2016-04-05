@@ -128,6 +128,18 @@ def importData(reader):
   if rows:
     docs.Product.buildProductBatch(rows)
 
+class ViewTransactionsHandler(BaseHandler):
+
+  def buildViewTransactionsPage(self, notification=None):
+    transactions = {
+      'transactions': ''
+    }
+    self.render_template('view_transactions.html', transactions)
+
+  @BaseHandler.logged_in
+  def get(self):
+    self.buildViewTransactionsPage()
+
 class UserProfileHandler(BaseHandler):
   """Displays the user page."""
 
