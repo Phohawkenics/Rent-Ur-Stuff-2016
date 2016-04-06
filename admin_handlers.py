@@ -144,13 +144,24 @@ class UserProfileHandler(BaseHandler):
   """Displays the user page."""
 
   def buildUserProfilePage(self, notification=None):
-    userInfo = {
-        'user_id': '',
-        'nickname': '',
-        'email': '',
-        'phone_number': '',
-        'meet_loc': ''
+    user = users.get_current_user()
+    userinfo = ndb.Key(models.UserInfo, user.user_id()).get()
+    if userinfo is not None:
+        userInfo = {
+            'user_id': '',
+            'nickname': userinfo.nickname,
+            'email': userinfo.email,
+            'phone_number': userinfo.phoneNumber,
+            'meet_point': userinfo.meetPoint
         }
+    else:
+        userInfo = {
+            'user_id': '',
+            'nickname': user.nickname(),
+            'email': user.email(),
+            'phone_number': '',
+            'meet_point': ''
+            }
     if notification:
       userInfo['notification'] = notification
     self.render_template('user_profile.html', userInfo)
@@ -163,13 +174,27 @@ class UserProfileHandler(BaseHandler):
     self.user_profile()
 
   def user_profile(self):
-    user_id = users.get_current_user().user_id()
-    nickname = self.request.get('nickname')
-    email = self.request.get('email')
-    phone_number = self.request.get('phone_number')
-    meet_loc = self.request.get('meet_loc')
-    
-    self.buildUserProfilePage(notification='Save Successful')
+    user = users.get_current_user()
+    userinfo = ndb.Key(models.UserInfo, user.user_id()).get()
+    if userinfo is None:
+        userinfo = models.UserInfo(
+            id = users.get_current_user().user_id(),
+            nickname = self.request.get('nickname'),
+            email = self.request.get('email'),
+            phoneNumber = self.request.get('phone_number'),
+            meetPoint = self.request.get('meet_point')
+        )
+        userinfo.put()
+        Notification = "Creation succesfully"
+    else:
+        userinfo.nickname = self.request.get('nickname')
+        userinfo.email = self.request.get('email')
+        userinfo.phoneNumber = self.request.get('phone_number')
+        userinfo.meetPoint = self.request.get('meet_point')
+        userinfo.put()
+        Notification = "Updated succesfully"
+
+    self.buildUserProfilePage(notification=Notification)
 
 
 class AdminHandler(BaseHandler):
