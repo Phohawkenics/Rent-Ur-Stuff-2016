@@ -244,17 +244,7 @@ class Review(ndb.Model):
 
 class UserInfo(ndb.Model):
   # Keyed by user_id
-  doc_id = ndb.StringProperty()
-
   nickname = ndb.StringProperty()
   email = ndb.StringProperty()
   phoneNumber = ndb.StringProperty()
   meetPoint = ndb.StringProperty()
-
-class UsersProducts(ndb.Model):
-  product = ndb.KeyProperty(kind=Product, required=True)
-  user_id = ndb.StringProperty(required=True)
-
-  @classmethod
-  def get_by(cls, user_id, product_key):
-    return cls.query(cls.user_id == user_id, cls.product == product_key).get()
