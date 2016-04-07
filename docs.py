@@ -299,7 +299,7 @@ class Product(BaseDocumentManager):
     return self.getFieldVal(self.PRICE)
 
   def getUserId(self):
-    """Get the value of the 'ar' (average rating) field of a Product doc."""
+    """Get the value of the 'user_id'  a Product doc."""
     return self.getFieldVal(self.USER_ID)
 
   def getMerchant(self):
