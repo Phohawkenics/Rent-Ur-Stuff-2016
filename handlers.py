@@ -102,6 +102,14 @@ class ShowProductHandler(BaseHandler):
     app_url = wsgiref.util.application_uri(self.request.environ)
     rlink = '/reviews?' + urllib.urlencode({'pid': pid, 'pname': pname})
     olink = '/order?' + urllib.urlencode({'pid': pid, 'pname': pname})
+    user = users.get_current_user()
+    if user is not None:
+        if user.user_id() == pdoc.getUserId():
+            user_is_poster = True
+        else:
+            user_is_poster = None
+    else:
+        user_is_poster = None;
     template_values = {
         'app_url': app_url,
         'pid': pid,
@@ -115,8 +123,7 @@ class ShowProductHandler(BaseHandler):
         'category': pdoc.getCategory(),
         'image_url': pdoc.getImageUrl(),
         'prod_doc': doc,
-        # for this demo, 'admin' status simply equates to being logged in
-        'user_is_admin': users.get_current_user()}
+        'user_is_admin': user_is_poster}
     logging.info('template_values :')
     logging.info(template_values)
     self.render_template('product.html', template_values)
