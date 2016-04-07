@@ -106,6 +106,7 @@ class ShowProductHandler(BaseHandler):
     meetPoint = "Montreal, Qc"
     if userinfo is not None:
         meetPoint = userinfo.meetPoint
+        phoneNumber = userinfo.phoneNumber
     user = users.get_current_user()
     if user is not None:
         if user.user_id() == pdoc.getUserId():
@@ -128,7 +129,8 @@ class ShowProductHandler(BaseHandler):
         'image_url': pdoc.getImageUrl(),
         'prod_doc': doc,
         'user_is_admin': user_is_poster,
-        'meetPoint': meetPoint}
+        'meetPoint': meetPoint,
+        'phoneNumber': phoneNumber}
     logging.info('template_values :')
     logging.info(template_values)
     self.render_template('product.html', template_values)
