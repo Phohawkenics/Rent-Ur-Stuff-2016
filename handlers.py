@@ -110,6 +110,7 @@ class ShowProductHandler(BaseHandler):
     if userinfo is not None:
         meetPoint = userinfo.meetPoint
         phoneNumber = userinfo.phoneNumber
+        nickname = userinfo.nickname
     user = users.get_current_user()
     if user is not None:
         if user.user_id() == pdoc.getUserId():
@@ -134,7 +135,8 @@ class ShowProductHandler(BaseHandler):
         'prod_doc': doc,
         'user_is_admin': user_is_poster,
         'meetPoint': meetPoint,
-        'phoneNumber': phoneNumber}
+        'phoneNumber': phoneNumber,
+        'userName': nickname}
     logging.info('template_values :')
     logging.info(template_values)
     self.render_template('product.html', template_values)
