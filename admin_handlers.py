@@ -150,8 +150,8 @@ class UserProfileHandler(BaseHandler):
             'user_id': '',
             'nickname': user.nickname(),
             'email': user.email(),
-            'phone_number': '',
-            'meet_point': ''
+            'phone_number': 'None',
+            'meet_point': 'Montreal, Qc'
             }
     if notification:
       userInfo['notification'] = notification
