@@ -338,11 +338,6 @@ class IPNHandler(BaseHandler):
                                      last_name=parameters['last_name'],
                                      verified=False)
 
-        # Get and store 'custom' field, if it exists.
-        for item in parameters.items():
-            if item[0] == 'custom':
-                payment.custom = item[1]
-
         # Insert new transactions in the database.
         if models.Transaction.transaction_exists(payment.transaction_id, payment.payment_status):
             # This transaction has already been verified and processed.

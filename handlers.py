@@ -605,7 +605,7 @@ class OrderHandler(BaseHandler):
             'price': price,
             'ppacc': ppacc,
             'pickupD': pickupD.date(),
-            'returnD': pickupD.date(),
+            'returnD': returnD.date(),
             'amount_paid': amount_paid,
             'image_url': pdoc.getImageUrl(),
             'prod_doc': doc,
