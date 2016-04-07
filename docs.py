@@ -161,6 +161,7 @@ class Product(BaseDocumentManager):
   PRODUCT_NAME = 'name'
   IMAGE_URL = 'image_url'
   PRICE = 'price'
+  PPACC = 'ppacc'
   AVG_RATING = 'ar' #average rating
   UPDATED = 'modified'
   USER_ID = 'user_id'
@@ -301,6 +302,10 @@ class Product(BaseDocumentManager):
     """Get the value of the 'ar' (average rating) field of a Product doc."""
     return self.getFieldVal(self.USER_ID)
 
+  def getMerchant(self):
+    """Get the value of the 'ppacc' field of a Product doc."""
+    return self.getFieldVal(self.PPACC)
+
 
   @classmethod
   def generateRatingsBuckets(cls, query_string):
@@ -359,7 +364,7 @@ class Product(BaseDocumentManager):
 
   @classmethod
   def _buildCoreProductFields(
-      cls, pid, name, user_id, description, category, category_name, image_url, price):
+      cls, pid, name, user_id, description, category, category_name, image_url, price, ppacc):
     """Construct a 'core' document field list for the fields common to all
     Products. The various categories (as defined in the file 'categories.py'),
     may add additional specialized fields; these will be appended to this
@@ -386,13 +391,14 @@ class Product(BaseDocumentManager):
               search.TextField(name=cls.IMAGE_URL, value=image_url),
               search.AtomField(name=cls.CATEGORY, value=category),
               search.NumberField(name=cls.AVG_RATING, value=0.0),
-              search.NumberField(name=cls.PRICE, value=price)
+              search.NumberField(name=cls.PRICE, value=price),
+              search.TextField(name=cls.PPACC, value=ppacc)
              ]
     return fields
 
   @classmethod
   def _buildProductFields(cls, pid=None, category=None, name=None, user_id=None,
-                          description=None, category_name=None, image_url=None, price=None, **params):
+                          description=None, category_name=None, image_url=None, price=None, ppacc=None, **params):
     """Build all the additional non-core fields for a document of the given
     product type (category), using the given params dict, and the
     already-constructed list of 'core' fields.  All such additional
@@ -400,7 +406,7 @@ class Product(BaseDocumentManager):
     """
 
     fields = cls._buildCoreProductFields(
-        pid, name, user_id, description, category, category_name, image_url, price)
+        pid, name, user_id, description, category, category_name, image_url, price, ppacc)
     # get the specification of additional (non-'core') fields for this category
     pdict = categories.product_dict.get(category_name)
     if pdict:
@@ -441,7 +447,7 @@ class Product(BaseDocumentManager):
   @classmethod
   def _createDocument(
       cls, pid=None, category=None, name=None, user_id=None, description=None,
-      category_name=None, image_url=None, price=None, **params):
+      category_name=None, image_url=None, price=None, ppacc=None, **params):
     """Create a Document object from given params."""
     # check for the fields that are always required.
     if pid and category and name and user_id:
@@ -455,7 +461,7 @@ class Product(BaseDocumentManager):
           pid=pid, category=category, name=name,
           user_id=user_id,
           description=description,
-          category_name=category_name, image_url=image_url, price=price, **params)
+          category_name=category_name, image_url=image_url, price=price, ppacc=ppacc, **params)
       # build and index the document.  Use the pid (product id) as the doc id.
       # (If we did not do this, and left the doc_id unspecified, an id would be
       # auto-generated.)

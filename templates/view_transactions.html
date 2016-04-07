@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-    <title>My Profile</title>
+    <title>My Transactions</title>
 {% endblock %}
 
 {% block content %}
@@ -20,38 +20,42 @@
 		            <th>Rentee Phone Number</th>
 		            <th>Meet Point</th>
 		            <th>Pick Up Date</th>
-		            <th>Return Data</th>
+		            <th>Return Date</th>
+		            <th>Amount Paid</th>
 		        </tr>
 		    </thead>
 		    <tbody>
-		        <tr>
-		            <td> Product XXXXXXX</td>
-		            <td>John Carter</td>
-		            <td>johncarter@mail.com</td>
-		            <td>514-123-4567</td>
-		            <td>1111 Barclay # 1</td>
-		            <td>20/4/2016</td>
-		            <td>20/4/2016</td>
-		        </tr>
-		        <tr>
-		            <td> Product XXXXXXX</td>
-		            <td>John Carter</td>
-		            <td>johncarter@mail.com</td>
-		            <td>514-123-4567</td>
-		            <td>1111 Barclay # 1</td>
-		            <td>20/4/2016</td>
-		            <td>20/4/2016</td>
-		        </tr>
-		        <tr>
-		            <td> Product XXXXXXX</td>
-		            <td>John Carter</td>
-		            <td>johncarter@mail.com</td>
-		            <td>514-123-4567</td>
-		            <td>1111 Barclay # 1</td>
-		            <td>20/4/2016</td>
-		            <td>20/4/2016</td>
-		        </tr>
+		    	{% if transactions %}
+			    	{% for transaction in transactions %}
+			        <tr>
+			            <td>{{transaction.product}}</td>
+			            <td>{{transaction.rentee}}</td>
+			            <td>{{transaction.email}}</td>
+			            <td>{{transaction.phone_number}}</td>
+			            <td>{{transaction.meet_point}}</td>
+			            <td>{{transaction.pick_up_date}}</td>
+			            <td>{{transaction.return_date}}</td>
+			            <td>{{transaction.amount_paid}}</td>
+			        </tr>
+			        {% endfor %}
+			    {% else %}
+			    	<tr>
+			            <td colspan="8"> <h2 style="text-align: center"> No transactions were found  </h2> </td>
+			        </tr>
+			    {% endif %}
 		    </tbody>
 		</table>
+		<div class="row">
+			<form class="form-horizontal" action="/admin/view_transactions?action=add" method="post">
+				<input class="btn primary" type="submit" value="Add sample data"/>
+			</form>
+
+		</div>
+		<div class="row">
+			<form class="form-horizontal" action="/admin/view_transactions?action=delete" method="post">
+				<input class="btn primary" type="submit" value="Delete"/>
+			</form>
+		</div>
 {% endblock %}
+
 

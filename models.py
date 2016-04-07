@@ -90,7 +90,7 @@ class Category(ndb.Model):
       return
     cname = category_data.get('name')
     if not cname:
-      logging.warn('no category name for %s', category)
+      logging.warn('no category name for %s', categories)
       return
     if parent_key:
       cat = cls(id=cname, parent_category=parent_key)
@@ -131,6 +131,7 @@ class Product(ndb.Model):
   user_id = ndb.IntegerProperty()
   location = ndb.StringProperty()
   price = ndb.FloatProperty()
+  ppacc = ndb.StringProperty()
   category = ndb.StringProperty()
   # average rating of the product over all its reviews
   avg_rating = ndb.FloatProperty(default=0)
@@ -248,3 +249,33 @@ class UserInfo(ndb.Model):
   email = ndb.StringProperty()
   phoneNumber = ndb.StringProperty()
   meetPoint = ndb.StringProperty()
+
+
+class Transaction(ndb.Model):
+    # Keyed by user_id
+    # t_id = ndb.StringProperty()  # Transaction ID
+    doc_id = ndb.StringProperty()
+    product = ndb.StringProperty()
+    rentee = ndb.StringProperty()
+    email = ndb.StringProperty()
+    phone_number = ndb.StringProperty()
+    meet_point = ndb.StringProperty()
+    pick_up_date = ndb.StringProperty()
+    return_date = ndb.StringProperty()
+    amount_paid = ndb.StringProperty()
+    dateSent = ndb.DateTimeProperty(auto_now_add=True)
+    transaction_id = ndb.StringProperty()
+    payment_status = ndb.StringProperty()
+    custom = ndb.StringProperty()
+    verified = ndb.BooleanProperty()
+
+    @classmethod
+    def get_by_doc_id(cls, user_id):
+        q1 = cls.query()
+        return q1.filter(cls.doc_id == user_id)
+
+    @classmethod
+    def deleteTransactions(cls):
+        logging.info("deleteCat()")
+        cats = cls.query().fetch()
+        [c.key.delete() for c in cats]

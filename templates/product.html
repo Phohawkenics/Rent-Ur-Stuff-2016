@@ -26,10 +26,44 @@
 				<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
 			</p>
 		</div>
+				</div>
+		<div class="form-group col-md-6 col-lg-6">
+			<p>
+                <form action="/order">
+                <input type="hidden" name="pname" value="{{pname}}" />
+                <input type="hidden" name="pid" value="{{pid}}" />
+                <input type="hidden" name="price" value="{{price}}" />
+                Pickup Date:
+                <input type="date" name="pickupD">
+                Return Date:
+                <input type="date" name="returnD">
+                <input class="btn primary" type="submit" value="Verify Order"/>
+                </form>
+				<br/><a href="{{order_link}}">Order Form for {{pname}}</a>
+			</p>
+		</div>
+        <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_xclick">
+                <input type="hidden" name="business" value={{ppacc}}>
+                <input type="hidden" name="lc" value="CA">
+                <input type="hidden" name="item_name" value={{pname}}>
+                <p class="paypal-group"><label class="paypal-label" for="quantity">Quantity<input type="text" class="paypal-input" name="quantity"></label></p>
+                <input type="hidden" name="amount" value="{{price}}">
+                <input type="hidden" name="currency_code" value="CAD">
+                <input type="hidden" name="button_subtype" value="services">
+                <input type="hidden" name="tax_rate" value="0.000">
+                <input type="hidden" name="shipping" value="0.00">
+                <input type="hidden" name="return" value="http://rent-your-stuff.appspot.com/">
+                <input type="hidden" name="cancel" value="http://rent-your-stuff.appspot.com/">
+                <input type="hidden" name="notify_url" value="http://rent-your-stuff.appspot.com/paypalreturn">
+                <input type="hidden" name="bn" value="PP-BuyNowBF:btn_paynow_LG.gif:NonHosted">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
 	</div>
 	<div class="row col-md-12 col-lg-12">
 		<div class="form-group">
-			<div class="col-md-6 col-lg-6"> 
+			<div class="col-md-6 col-lg-6">
 				<h4>Create a Review for {{pname}}</h4>
 				<form action="/create_review" method="post">
 					<input type="hidden" name="pid" value="{{pid}}" />
@@ -65,18 +99,18 @@
 			</div>
 		</div>
 	</div>
-  
+
 
       <!-- For expository purposes, all document fields are listed below with their actual names; -->
         <!-- a real customer-facing app would expose this information differently. -->
 	<div class="row col-md-12 col-lg-12">
-		<div id="mapbox"> 
+		<div id="mapbox">
 		   <div id="map" style="display: none; margin: 0 0 20px 20px;width: 650px; height: 600px;border: 1px solid #6666dd;">
 		   </div>
 		</div>
 	</div>
 <script type="text/javascript">
-  
+
   var geocoder;
   var map;
   var address = "Montreal, Qc";
@@ -118,7 +152,7 @@
             google.maps.event.addListener(marker, 'click', function() {
               infowindow.open(map, marker);
             });
-            
+
             infowindow.open(map, marker);
 
           } else {

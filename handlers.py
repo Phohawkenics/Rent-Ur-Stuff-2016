@@ -61,7 +61,9 @@ class ShowProductHandler(BaseHandler):
         'comment': '',
         'rating': '',
         'category': '',
-        'image_url': ''
+        'image_url': '',
+        'price': '',
+        'ppacc': ''
     }
     for k, v in params.iteritems():
       # Possibly replace default values.
@@ -95,13 +97,19 @@ class ShowProductHandler(BaseHandler):
       logging.error(error_message)
     pdoc = docs.Product(doc)
     pname = pdoc.getName()
+    price = pdoc.getPrice()
+    ppacc = pdoc.getMerchant()
     app_url = wsgiref.util.application_uri(self.request.environ)
     rlink = '/reviews?' + urllib.urlencode({'pid': pid, 'pname': pname})
+    olink = '/order?' + urllib.urlencode({'pid': pid, 'pname': pname})
     template_values = {
         'app_url': app_url,
         'pid': pid,
         'pname': pname,
+        'price': price,
+        'ppacc': ppacc,
         'review_link': rlink,
+        'order_link': olink,
         'comment': params['comment'],
         'rating': params['rating'],
         'category': pdoc.getCategory(),
@@ -545,3 +553,68 @@ class StoreLocationHandler(BaseHandler):
       response_obj2.append(resp)
     logging.info("resp: %s", response_obj2)
     self.render_json(response_obj2)
+
+
+class OrderHandler(BaseHandler):
+    """Display product details."""
+
+    def parseParams(self):
+        """Filter the param set to the expected params."""
+        # The dict can be modified to add any defined defaults.
+
+        params = {
+            'pid': '',
+            'pname': '',
+            'category': '',
+            'image_url': '',
+            'price': '',
+            'ppacc': ''
+        }
+        for k, v in params.iteritems():
+            # Possibly replace default values.
+            params[k] = self.request.get(k, v)
+
+        logging.info(params)
+        return params
+
+    def get(self):
+        """Do a document search for the given product id,
+    and display the retrieved document fields."""
+
+        params = self.parseParams()
+
+        pid = params['pid']
+        if not pid:
+            # we should not reach this
+            msg = 'Error: do not have product id.'
+            url = '/'
+            linktext = 'Go to product search page.'
+            self.render_template(
+                'notification.html',
+                {'title': 'Error', 'msg': msg,
+                 'goto_url': url, 'linktext': linktext})
+            return
+        doc = docs.Product.getDocFromPid(pid)
+        logging.info(doc)
+        if not doc:
+            error_message = ('Document not found for pid %s.' % pid)
+            return self.abort(404, error_message)
+            logging.error(error_message)
+        pdoc = docs.Product(doc)
+        pname = pdoc.getName()
+        price = pdoc.getPrice()
+        ppacc = pdoc.getMerchant()
+        app_url = wsgiref.util.application_uri(self.request.environ)
+        template_values = {
+            'app_url': app_url,
+            'pid': pid,
+            'pname': pname,
+            'price': price,
+            'ppacc': ppacc,
+            'image_url': pdoc.getImageUrl(),
+            'prod_doc': doc,
+            # for this demo, 'admin' status simply equates to being logged in
+            'user_is_admin': users.get_current_user()}
+        logging.info('template_values :')
+        logging.info(template_values)
+        self.render_template('order.html', template_values)
