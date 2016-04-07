@@ -23,6 +23,7 @@ import logging
 import os
 import urllib
 import uuid
+import webapp2
 
 from base_handler import BaseHandler
 import categories
@@ -37,6 +38,7 @@ from google.appengine.api import users
 from google.appengine.ext.deferred import defer
 from google.appengine.ext import ndb
 from google.appengine.api import search
+from google.appengine.api import urlfetch
 
 
 def deleteData(sample_data=True):
@@ -127,18 +129,6 @@ def importData(reader):
       rows.append(row)
   if rows:
     docs.Product.buildProductBatch(rows)
-
-class ViewTransactionsHandler(BaseHandler):
-
-  def buildViewTransactionsPage(self, notification=None):
-    transactions = {
-      'transactions': ''
-    }
-    self.render_template('view_transactions.html', transactions)
-
-  @BaseHandler.logged_in
-  def get(self):
-    self.buildViewTransactionsPage()
 
 class UserProfileHandler(BaseHandler):
   """Displays the user page."""
@@ -365,4 +355,113 @@ class CreateProductHandler(BaseHandler):
       params['error_message'] = e.error_message
       self.render_template('create_product.html', params)
 
+
+class ViewTransactionsHandler(BaseHandler):
+        def buildViewTransactionsPage(self, notification=None):
+            stuff = models.Transaction.get_by_doc_id(users.get_current_user().user_id())
+            logging.info(stuff)
+            if not stuff.get():
+                stuff = None
+            transactions = {
+                'transactions': stuff
+            }
+            if notification:
+                transactions['notification'] = notification
+
+            self.render_template('view_transactions.html', transactions)
+
+        @BaseHandler.logged_in
+        def get(self):
+            self.buildViewTransactionsPage()
+
+        @BaseHandler.logged_in
+        def post(self):
+            action = self.request.get('action')
+            if action == 'add':
+                transaction = models.Transaction()
+                transaction.doc_id = users.get_current_user().user_id()
+                transaction.product = 'Product XXXXXXX'
+                transaction.rentee = 'John Carter'
+                transaction.email = 'johncarter@mail.com'
+                transaction.phone_number = '514-123-4567'
+                transaction.meet_point = '1111 Barclay # 1'
+                transaction.pick_up_date = '20/4/2016'
+                transaction.return_date = '20/4/2016'
+                transaction.amount_paid = '90$'
+                transaction.put()
+                self.buildViewTransactionsPage(notification='Transaction Add')
+            elif action == 'delete':
+                models.Transaction.deleteTransactions()
+                self.buildViewTransactionsPage(notification='Transaction Deleted')
+
+
+ACCOUNT_EMAIL = "seller@example.com"
+PP_URL = "https://www.paypal.com/cgi-bin/webscr"
+
+# Set to false if ready for production, true if using PayPal's IPN simulator -
+#  https://developer.paypal.com/webapps/developer/applications/ipn_simulator
+usePayPalSandbox = True
+
+if usePayPalSandbox:
+    # Do not change these values
+    ACCOUNT_EMAIL = "s01@test.com"
+    PP_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
+
+    # class IPNHandler(webapp2.RequestHandler):
+
+
+class IPNHandler(BaseHandler):
+    def post(self):
+        parameters = None
+        if self.request.POST:
+            parameters = self.request.POST.copy()
+        if self.request.GET:
+            parameters = self.request.GET.copy()
+
+        if parameters:
+            # Send the notification back to Paypal for verification
+            parameters['cmd'] = '_notify-validate'
+            params = urllib.urlencode(parameters)
+            status = urlfetch.fetch(
+                url=PP_URL,
+                method=urlfetch.POST,
+                payload=params,
+            ).content
+
+        payment = models.Transaction(receiver_email=parameters['receiver_email'],
+                                     transaction_id=parameters['txn_id'],
+                                     transaction_type=parameters['txn_type'],
+                                     payment_type=parameters['payment_type'],
+                                     payment_status=parameters['payment_status'],
+                                     amount=parameters['mc_gross'],
+                                     currency=parameters['mc_currency'],
+                                     payer_email=parameters['payer_email'],
+                                     first_name=parameters['first_name'],
+                                     last_name=parameters['last_name'],
+                                     verified=False)
+
+        # Get and store 'custom' field, if it exists.
+        for item in parameters.items():
+            if item[0] == 'custom':
+                payment.custom = item[1]
+
+        # Insert new transactions in the database.
+        if models.Transaction.transaction_exists(payment.transaction_id, payment.payment_status):
+            # This transaction has already been verified and processed.
+            logging.debug('Transaction already exists')
+
+        # Verify that the payment is confirmed by PayPal and that it is going to the correct account
+        elif status == "VERIFIED" and payment.receiver_email == ACCOUNT_EMAIL:
+
+            if payment.payment_status == "Completed":
+                payment.verified = True
+                # Insert actions to take if a completed transaction is received here:
+
+            else:
+                payment.verified = False
+                # Insert actions to take if a transaction with unverified payment is received here:
+
+            # Insert new (verified) transactions in the database. You may wish to store/log unverified transactions as well as these may be malicious.
+            payment.put()
+            logging.debug('New transaction added to database')
 
