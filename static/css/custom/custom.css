@@ -27,3 +27,10 @@ article {
 	max-height: 300px;
 	max-width: 400px;
 }
+
+.product-info .image_url,
+.product-info .pid,
+.product-info .user_id ,
+.product-info .ppacc {
+	display:none;
+}

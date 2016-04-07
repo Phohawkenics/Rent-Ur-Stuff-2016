@@ -7,123 +7,148 @@
       src="https://maps.googleapis.com/maps/api/js?sensor=false"
       type="text/javascript"></script>
     <script type="text/javascript" src="/static/js/StyledMarker.js"></script>
-
-
 {% endblock %}
 
-
 {% block content %}
-	<h2>Product Information for {{pname}}</h2>
-	<div class="row col-md-12 col-lg-12">
-		<div class="form-group col-md-6 col-lg-6 productImage"><img src="{{image_url}}" atl="image">
-
-		</div>
+	 <h2>Product Information for {{pname}}</h2>
+	 <div class="row col-md-12 col-lg-12">
+  		<div class="form-group col-md-6 col-lg-6 productImage">
+        <img src="{{image_url}}" atl="image">
+  		</div>
+      <ul class="meta-search list-unstyled col-xs-12 col-sm-12 col-md-12 col-lg-6">
+        <li>
+          <div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+            <i class="glyphicon glyphicon-tags"></i> <span> {{meetPoint}}</span>
+          </div>
+        </li>
+        <li>
+          <div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+            <i class="glyphicon glyphicon-user"></i> <span></span>
+          </div>
+        </li>
+                  <li>
+          <div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
+            <i class="glyphicon glyphicon-phone"></i> <span>{{phoneNumber}}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="row col-md-12 col-lg-12">
+      <hr/>
+    </div>
+    <div class="row col-md-12 col-lg-12">
+    	<div class="product-info form-group col-md-12col-lg-12">
+    			<br/>
+          {% for field in prod_doc.fields %}
+    			<p class="{{field.name}}"><span ><b>{{field.name}}</b>: &nbsp;{{field.value}}</span> <br/>
+          </p>
+    			{% endfor %}
+    			<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
+    	</div>
+    </div>
+    <div class="row col-md-12 col-lg-12">
+      <hr/>
+    </div>
 		<div class="form-group col-md-6 col-lg-6">
 			<p>
-				<br/>{% for field in prod_doc.fields %}
-				<span class="{{field.name}}"><b>{{field.name}}</b>:&nbsp;{{field.value}}</span> <br/>
-				{% endfor %}
-				<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
-			</p>
-		</div>
-				</div>
-		<div class="form-group col-md-6 col-lg-6">
-			<p>
-                <form action="/order">
-                <input type="hidden" name="pname" value="{{pname}}" />
-                <input type="hidden" name="pid" value="{{pid}}" />
-                <input type="hidden" name="price" value="{{price}}" />
-                Pickup Date:
-                <input type="date" name="pickupD">
-                Return Date:
-                <input type="date" name="returnD">
-                <input class="btn primary" type="submit" value="Verify Order"/>
-                </form>
+        <form action="/order">
+          <input type="hidden" name="pname" value="{{pname}}" />
+          <input type="hidden" name="pid" value="{{pid}}" />
+          <input type="hidden" name="price" value="{{price}}" />
+          Pickup Date:
+          <input type="date" name="pickupD">
+          Return Date:
+          <input type="date" name="returnD">
+          <input class="btn primary" type="submit" value="Verify Order"/>
+        </form>
 				<br/><a href="{{order_link}}">Order Form for {{pname}}</a>
 			</p>
 		</div>
-        <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                <input type="hidden" name="cmd" value="_xclick">
-                <input type="hidden" name="business" value={{ppacc}}>
-                <input type="hidden" name="lc" value="CA">
-                <input type="hidden" name="item_name" value={{pname}}>
-                <p class="paypal-group"><label class="paypal-label" for="quantity">Quantity<input type="text" class="paypal-input" name="quantity"></label></p>
-                <input type="hidden" name="amount" value="{{price}}">
-                <input type="hidden" name="currency_code" value="CAD">
-                <input type="hidden" name="button_subtype" value="services">
-                <input type="hidden" name="tax_rate" value="0.000">
-                <input type="hidden" name="shipping" value="0.00">
-                <input type="hidden" name="return" value="http://rent-your-stuff.appspot.com/">
-                <input type="hidden" name="cancel" value="http://rent-your-stuff.appspot.com/">
-                <input type="hidden" name="notify_url" value="http://rent-your-stuff.appspot.com/paypalreturn">
-                <input type="hidden" name="bn" value="PP-BuyNowBF:btn_paynow_LG.gif:NonHosted">
-                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
+    <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+        <input type="hidden" name="cmd" value="_xclick">
+        <input type="hidden" name="business" value={{ppacc}}>
+        <input type="hidden" name="lc" value="CA">
+        <input type="hidden" name="item_name" value={{pname}}>
+        <p class="paypal-group"><label class="paypal-label" for="quantity">Quantity<input type="text" class="paypal-input" name="quantity"></label></p>
+        <input type="hidden" name="amount" value="{{price}}">
+        <input type="hidden" name="currency_code" value="CAD">
+        <input type="hidden" name="button_subtype" value="services">
+        <input type="hidden" name="tax_rate" value="0.000">
+        <input type="hidden" name="shipping" value="0.00">
+        <input type="hidden" name="return" value="http://rent-your-stuff.appspot.com/">
+        <input type="hidden" name="cancel" value="http://rent-your-stuff.appspot.com/">
+        <input type="hidden" name="notify_url" value="http://rent-your-stuff.appspot.com/paypalreturn">
+        <input type="hidden" name="bn" value="PP-BuyNowBF:btn_paynow_LG.gif:NonHosted">
+        <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+        <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+    </form>
+    <div class="row col-md-12 col-lg-12">
+      <div class="form-group">
+        <div class="col-md-6 col-lg-6">
+          <h4>Create a Review for {{pname}}</h4>
+          <form action="/create_review" method="post">
+            <input type="hidden" name="pid" value="{{pid}}" />
+            <input type="hidden" name="category" value="{{category}}" />
+            <input type="hidden" name="pname" value="{{pname}}" />
+            <div class="clearfix">
+              <label for="comment">review comment:</label>
+              <div class="input">
+                <textarea class="form-control" name="comment" rows="3" cols="80">{{comment}}</textarea>
+              </div>
+            </div>
+            <div class="clearfix">
+              <label for="rating">rating (1-5):</label>
+              <div class="input">
+                <input class="form-control" type="text" id="rating" name="rating" value="{{rating}}"/>
+              </div>
+            </div>
+            <div class="actions">
+              <input class="btn primary" id="subreview" name="subreview" type="submit" value="Review"/>
+              <input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
+            </div>
+          </form>
+          <hr/>
+          <form name="searchbyuserform" class="form-horizontal " action="/psearch?sort=relevance&query={{ user_id }}" method="post">
+              <input type="submit" class="btn primary"  name="psearchsub" value="Show listings of the same user"/>
+          </form>
+          {% if user_is_admin %}
+          <hr/>
+          <p>Delete this product and its reviews; no undo (admin).</p>
+          <form action="/admin/delete_product" method="post">
+            <input type="hidden" name="pid" value="{{pid}}" />
+            <div class="actions">
+              <input class="btn primary" id="delete_prod" name="delete_prod" type="submit" value="Delete Product"/>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="row col-md-12 col-lg-12">
+      <h2> Location </h2>
+      <div id="mapbox">
+         <div id="map" style="display: none; margin: 0 0 20px 20px;width: 650px; height: 600px;border: 1px solid #6666dd;    margin: auto;">
+         </div>
+      </div>
+      <div id="noMapbox" style="display: none">
+        <h2>No Location is available</h2>
+      </div>
+    </div>
 	</div>
-	<div class="row col-md-12 col-lg-12">
-		<div class="form-group">
-			<div class="col-md-6 col-lg-6">
-				<h4>Create a Review for {{pname}}</h4>
-				<form action="/create_review" method="post">
-					<input type="hidden" name="pid" value="{{pid}}" />
-					<input type="hidden" name="category" value="{{category}}" />
-					<input type="hidden" name="pname" value="{{pname}}" />
-					<div class="clearfix">
-						<label for="comment">review comment:</label>
-						<div class="input">
-							<textarea class="form-control" name="comment" rows="3" cols="80">{{comment}}</textarea>
-						</div>
-					</div>
-					<div class="clearfix">
-						<label for="rating">rating (1-5):</label>
-						<div class="input">
-							<input class="form-control" type="text" id="rating" name="rating" value="{{rating}}"/>
-						</div>
-					</div>
-					<div class="actions">
-						<input class="btn primary" id="subreview" name="subreview" type="submit" value="Review"/>
-						<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
-					</div>
-				</form>
-
-				{% if user_is_admin %}
-				<p>Delete this product and its reviews; no undo (admin).</p>
-				<form action="/admin/delete_product" method="post">
-					<input type="hidden" name="pid" value="{{pid}}" />
-					<div class="actions">
-						<input class="btn primary" id="delete_prod" name="delete_prod" type="submit" value="Delete Product"/>
-					</div>
-				</form>
-				{% endif %}
-                <form name="searchbyuserform" class="form-horizontal col-xs-12 col-md-12 col-sm-12 col-lg-12" action="/psearch?sort=relevance&query={{ user_id }}" method="post">
-                    <div class="row">
-                        <div class=" col-xs-1 col-md-1 col-sm-1 col-lg-1">
-                            <input type="submit" class="btn primary"  name="psearchsub" value="Listings"/>
-                        </div>
-                    </div>
-                 </form>
-			</div>
-		</div>
-	</div>
-
-
-      <!-- For expository purposes, all document fields are listed below with their actual names; -->
-        <!-- a real customer-facing app would expose this information differently. -->
-	<div class="row col-md-12 col-lg-12">
-		<div id="mapbox">
-		   <div id="map" style="display: none; margin: 0 0 20px 20px;width: 650px; height: 600px;border: 1px solid #6666dd;">
-		   </div>
-		</div>
-	</div>
+	
 <script type="text/javascript">
 
   var geocoder;
   var map;
-  var address = '{{  meetPoint }}';
-  initialize();
+  var address = '{{meetPoint}}';
+  console.log(address.length);
+  if (address.length != 0) {
+    initialize();
+  } else {
+    $('#noMapbox').css({'display': 'block'})
+  }
   function initialize() {
-    $('#map').css({ 'display': 'block'});
+    $('#map').show();
     geocoder = new google.maps.Geocoder();
     var latlng = new google.maps.LatLng(-34.397, 150.644);
     var myOptions = {
@@ -171,7 +196,5 @@
       });
     }
   }
-  google.maps.event.addDomListener(window, 'load', initialize);
-
 </script>
  {% endblock %}
