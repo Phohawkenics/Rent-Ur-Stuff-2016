@@ -5,17 +5,20 @@
 
 {% block content %}
 
-  <p></p>
-  <p>Back to product <a href="{{prod_url}}">{{pname}}</a></p>
+  <div class="row">
+    <h4 style="float:right"><a href="{{prod_url}}">
+        <span class="glyphicon glyphicon-share-alt"></span>Click here to return to product {{pname}} </a></h4>
+  </div>
 
-   <h3>New review for {{pname}}</h3>
-
+   <h2 >Review created successfully for {{pname}}</h2>
     <h4>
-
-      <p>
-       Username: {{review.username}} <br/>
-       Rating: {{review.rating}} <br/>
-       Comment: {{review.comment}} <br/>
-      </p>
-
+      <div class="form-group">
+        <div class="row">
+          <label class="col-md-6  col-lg-6" for="usr">Reviewer: {{review.username}}</label>
+          <label class="col-md-6  col-lg-6" for="rating">Rating: {{review.rating}}</label>
+        </div>
+        <label for="comment">Comment:</label>
+        <textarea class="form-control" rows="5" readonly="readonly" id="comment">{{review.comment}}</textarea>
+      </div>
+      <hr/>
 {% endblock %}

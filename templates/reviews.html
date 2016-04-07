@@ -5,26 +5,30 @@
 
 {% block content %}
 
-  <p></p>
-  <p>Back to product <a href="{{prod_url}}">{{pname}}</a></p>
-
-
-   <h3>Reviews for {{pname}}</h3>
+  <div class="row">
+    <h4 style="float:right"><a href="{{prod_url}}">
+        <span class="glyphicon glyphicon-share-alt"></span>Click here to return to product {{pname}} </a></h4>
+  </div>
+   <h2 style="text-align: center;;">Reviews for {{pname}}</h2>
 
    {% if rlist %}
-
-    <h4>
-
-     Average rating {{avg_rating}} </h4>
+   <h4>Average rating {{avg_rating}} </h4>
 
     {% for result in rlist %}
-      <p>
-       Username: {{result.0}} <br/>
-       Rating: {{result.1}} <br/>
-       Comment: {{result.2}} <br/>
-      </p>
+    <hr/>
+      <div class="form-group">
+        <div class="row">
+          <label class="col-md-6  col-lg-6" for="usr">Reviewer: {{result.0}}</label>
+          <label class="col-md-6  col-lg-6" for="rating">Rating: {{result.1}}</label>
+        </div>
+        <label for="comment">Comment:</label>
+        <textarea class="form-control" rows="5" readonly="readonly" id="comment">{{result.2}}</textarea>
+      </div>
     {% endfor %}
-
+      <div class="row">
+        <h4 ><a href="{{prod_url}}">
+            <span class="glyphicon glyphicon-share-alt"></span>Click here to return to product {{pname}} </a></h4>
+      </div>
     {% else %}
     <h4>None yet</h4>
     {% endif %}

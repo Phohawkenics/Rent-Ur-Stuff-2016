@@ -23,7 +23,7 @@
         </li>
         <li>
           <div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
-            <i class="glyphicon glyphicon-user"></i> <span></span>
+            <i class="glyphicon glyphicon-user"></i> <span>{{userName}}</span>
           </div>
         </li>
                   <li>
@@ -45,15 +45,18 @@
             {% endif %}
           </p>
     			{% endfor %}
-    			<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
+    			<br/>
     	</div>
+      <div class="viewReview">
+        <a href="{{review_link}}">View Reviews for the Product: {{pname}}</a>
+      </div>
     </div>
     <div class="row col-md-12 col-lg-12">
       <hr/>
     </div>
-		<div class="form-group col-md-6 col-lg-6">
+		<div class="form-group col-md-12 col-lg-12">
 			<p>
-        <form action="/order">
+        <form  style="margin:auto "action="/order">
           <input type="hidden" name="pname" value="{{pname}}" />
           <input type="hidden" name="pid" value="{{pid}}" />
              <input type="hidden" name="ppacc" value="{{ppacc}}" />
@@ -62,9 +65,8 @@
           <input type="date" name="pickupD">
           Return Date:
           <input type="date" name="returnD">
-          <input class="btn primary" type="submit" value="Verify Order"/>
+          <input class="btn primary" type="submit" value="Proceed to Checkout"/>
         </form>
-				
 			</p>
 		</div>
     <div class="row col-md-12 col-lg-12">
