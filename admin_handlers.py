@@ -39,6 +39,7 @@ from google.appengine.ext.deferred import defer
 from google.appengine.ext import ndb
 from google.appengine.api import search
 from google.appengine.api import urlfetch
+from datetime import datetime
 
 
 def deleteData(sample_data=True):
@@ -465,3 +466,34 @@ class IPNHandler(BaseHandler):
             payment.put()
             logging.debug('New transaction added to database')
 
+class TransactionHandler(BaseHandler):
+    """Displays the user page."""
+
+    @BaseHandler.logged_in
+    def get(self):
+        params = self.parseParams()
+        self.render_template('order.html', params)
+
+    @BaseHandler.logged_in
+    def post(self):
+        self.createProduct(self.parseParams())
+
+
+
+    date_format = "%Y-%m-%d"
+    a = datetime.strptime(self.request.get('pickupD'), date_format)
+    b = datetime.strptime(self.request.get('returnD'), date_format)
+    c = b - a
+    amount_paid = models.Product.price() * c
+
+    params = {
+        'tid': uuid.uuid4().hex,  # auto-generate default UID
+        'rentee_id': users.get_current_user().user_id(),  # give id automatically to product
+        'renter_id': models.Product.user_id(),
+        'amount_paid': amount_paid,
+        'pickupD': self.request.get('pickupD'),
+        'returnD': self.request.get('returnD'),
+        'meet_point': '',
+        'verified': False,
+        }
+    self.render_template('create_product.html', params)

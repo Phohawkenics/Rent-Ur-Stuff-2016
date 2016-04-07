@@ -253,7 +253,7 @@ class UserInfo(ndb.Model):
 
 class Transaction(ndb.Model):
     # Keyed by user_id
-    # t_id = ndb.StringProperty()  # Transaction ID
+    t_id = ndb.StringProperty()  # Transaction ID
     doc_id = ndb.StringProperty()
     product = ndb.StringProperty()
     rentee = ndb.StringProperty()
@@ -264,7 +264,6 @@ class Transaction(ndb.Model):
     return_date = ndb.StringProperty()
     amount_paid = ndb.StringProperty()
     dateSent = ndb.DateTimeProperty(auto_now_add=True)
-    transaction_id = ndb.StringProperty()
     payment_status = ndb.StringProperty()
     custom = ndb.StringProperty()
     verified = ndb.BooleanProperty()
