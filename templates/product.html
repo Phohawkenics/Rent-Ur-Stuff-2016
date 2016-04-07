@@ -120,8 +120,8 @@
 
   var geocoder;
   var map;
-  var address = meetPoint;
-
+  var address = '{{  meetPoint }}';
+  initialize();
   function initialize() {
     $('#map').css({ 'display': 'block'});
     geocoder = new google.maps.Geocoder();

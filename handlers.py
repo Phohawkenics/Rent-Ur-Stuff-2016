@@ -102,6 +102,10 @@ class ShowProductHandler(BaseHandler):
     app_url = wsgiref.util.application_uri(self.request.environ)
     rlink = '/reviews?' + urllib.urlencode({'pid': pid, 'pname': pname})
     olink = '/order?' + urllib.urlencode({'pid': pid, 'pname': pname})
+    userinfo = ndb.Key(models.UserInfo, pdoc.getUserId()).get()
+    meetPoint = "Montreal, Qc"
+    if userinfo is not None:
+        meetPoint = userinfo.meetPoint
     user = users.get_current_user()
     if user is not None:
         if user.user_id() == pdoc.getUserId():
@@ -123,7 +127,8 @@ class ShowProductHandler(BaseHandler):
         'category': pdoc.getCategory(),
         'image_url': pdoc.getImageUrl(),
         'prod_doc': doc,
-        'user_is_admin': user_is_poster}
+        'user_is_admin': user_is_poster,
+        'meetPoint': meetPoint}
     logging.info('template_values :')
     logging.info(template_values)
     self.render_template('product.html', template_values)
@@ -337,6 +342,15 @@ class ProductSearchHandler(BaseHandler):
       # snippeting is not supported on the dev app server.
       description_snippet = pdoc.getDescription()
       image_url = pdoc.getImageUrl()
+      logging.info("User ID: %s", pdoc.getUserId())
+      userinfo = ndb.Key(models.UserInfo, pdoc.getUserId()).get()
+      user_nickname = "Mr. X"
+      meetPoint = "Montreal, Qc"
+      phoneNumber = "None"
+      if userinfo is not None:
+          user_nickname = userinfo.nickname
+          meetPoint = userinfo.meetPoint
+          phoneNumber = userinfo.phoneNumber
       price = pdoc.getPrice()
       # on the dev app server, the doc.expressions property won't be populated.
       for expr in doc.expressions:
@@ -357,7 +371,9 @@ class ProductSearchHandler(BaseHandler):
       # pass to the template renderer
       psearch_response.append(
           [doc, urllib.quote_plus(pid), cat,
-           description_snippet, price, pname, catname, avg_rating, image_url])
+           description_snippet, price, pname,
+           catname, avg_rating, image_url,
+           user_nickname, meetPoint, phoneNumber])
     if not query:
       print_query = 'All'
     else:
@@ -393,7 +409,7 @@ class ProductSearchHandler(BaseHandler):
         expression='price * 1.08')
     returned_fields = [docs.Product.PID, docs.Product.DESCRIPTION,
                 docs.Product.CATEGORY, docs.Product.AVG_RATING,
-                docs.Product.PRICE, docs.Product.IMAGE_URL, docs.Product.PRODUCT_NAME]
+                docs.Product.PRICE, docs.Product.IMAGE_URL, docs.Product.USER_ID, docs.Product.PRODUCT_NAME]
 
     if sortq == 'relevance':
       # If sorting on 'relevance', use the Match scorer.
