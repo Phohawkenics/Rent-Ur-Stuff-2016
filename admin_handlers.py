@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """ Contains the admin request handlers for the app (those that require
-administrative access).
+ you to be logged in).
 """
 
 import csv
@@ -31,7 +31,6 @@ import config
 import docs
 import errors
 import models
-import stores
 import utils
 
 from google.appengine.api import users
@@ -43,14 +42,7 @@ from datetime import datetime
 
 
 def deleteData(sample_data=True):
-  """
-  Deletes all product entities and documents, essentially resetting the app
-  state, then loads in static sample data if requested. Hardwired for the
-  expected product types in the sample data.
-  (Re)loads store location data from stores.py as well.
-  This function is intended to be run 'offline' (e.g., via a Task Queue task).
-  As an extension to this functionality, the channel ID could be used to notify
-  when done."""
+
   # also reinstantiate categories list
   models.Category.deleteCategories()
   # delete all the product and review entities
@@ -62,74 +54,6 @@ def deleteData(sample_data=True):
   # store indexes
   docs.Product.deleteAllInProductIndex()
   docs.Store.deleteAllInIndex()
-
-def loadData(sample_data=True):
-  if sample_data:
-    logging.info('Loading product sample data')
-    # Load from csv sample files.
-    # The following are hardwired to the format of the sample data files
-    # for the two example product types ('books' and 'hd televisions')-- see
-    # categories.py
-    datafile = os.path.join('data', config.SAMPLE_DATA_BOOKS)
-    # books
-    reader = csv.DictReader(
-        open(datafile, 'r'),
-        ['pid', 'name', 'category', 'price',
-         'publisher', 'title', 'pages', 'author',
-         'description', 'isbn'])
-    importData(reader)
-    datafile = os.path.join('data', config.SAMPLE_DATA_TVS)
-    # tvs
-    reader = csv.DictReader(
-        open(datafile, 'r'),
-        ['pid', 'name', 'category', 'price',
-         'size', 'brand', 'tv_type',
-         'description'])
-    importData(reader)
-
-    # next create docs from store location info
-    loadStoreLocationData()
-    # next build categories
-    models.Category.buildAllCategories()
-
-  logging.info('Re-initialization complete.')
-
-def loadStoreLocationData():
-    # create documents from store location info
-    # currently logs but otherwise swallows search errors.
-    slocs = stores.stores
-    for s in slocs:
-      logging.info("s: %s", s)
-      geopoint = search.GeoPoint(s[3][0], s[3][1])
-      fields = [search.TextField(name=docs.Store.STORE_NAME, value=s[1]),
-                search.TextField(name=docs.Store.STORE_ADDRESS, value=s[2]),
-                search.GeoField(name=docs.Store.STORE_LOCATION, value=geopoint)
-              ]
-      d = search.Document(doc_id=s[0], fields=fields)
-      try:
-        add_result = search.Index(config.STORE_INDEX_NAME).put(d)
-      except search.Error:
-        logging.exception("Error adding document:")
-
-
-def importData(reader):
-  """Import via the csv reader iterator using the specified batch size as set in
-  the config file.  We want to ensure the batch is not too large-- we allow 100
-  rows/products max per batch."""
-  MAX_BATCH_SIZE = 100
-  rows = []
-  # index in batches
-  # ensure the batch size in the config file is not over the max or < 1.
-  batchsize = utils.intClamp(config.IMPORT_BATCH_SIZE, 1, MAX_BATCH_SIZE)
-  logging.debug('batchsize: %s', batchsize)
-  for row in reader:
-    if len(rows) == batchsize:
-      docs.Product.buildProductBatch(rows)
-      rows = [row]
-    else:
-      rows.append(row)
-  if rows:
-    docs.Product.buildProductBatch(rows)
 
 class UserProfileHandler(BaseHandler):
   """Displays the user page."""
@@ -210,38 +134,10 @@ class AdminHandler(BaseHandler):
       # delete data
       defer(deleteData)
       self.buildAdminPage(notification="Delete performed.")
-    elif action == 'loadData':
-      # load data
-      defer(loadData)
-      self.buildAdminPage(notification="Load performed.")
-    elif action == 'demo_update':
-      # update the sample data, from (hardwired) book update
-      # data. Demonstrates updating some existing products, and adding some new
-      # ones.
-      logging.info('Loading product sample update data')
-      # The following is hardwired to the known format of the sample data file
-      datafile = os.path.join('data', config.DEMO_UPDATE_BOOKS_DATA)
-      reader = csv.DictReader(
-          open(datafile, 'r'),
-          ['pid', 'name', 'category', 'price',
-           'publisher', 'title', 'pages', 'author',
-           'description', 'isbn'])
-      for row in reader:
-        docs.Product.buildProduct(row)
-      self.buildAdminPage(notification="Demo update performed.")
-
-    elif action == 'update_ratings':
-      self.update_ratings()
-      self.buildAdminPage(notification="Ratings update performed.")
     else:
       self.buildAdminPage()
 
   def update_ratings(self):
-    """Find the products that have had an average ratings change, and need their
-    associated documents updated (re-indexed) to reflect that change; and
-    re-index those docs in batch. There will only
-    be such products if config.BATCH_RATINGS_UPDATE is True; otherwise the
-    associated documents will be updated right away."""
     # get the pids of the products that need review info updated in their
     # associated documents.
     pkeys = models.Product.query(

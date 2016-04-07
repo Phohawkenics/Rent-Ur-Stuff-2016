@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Contains the non-admin ('user-facing') request handlers for the app."""
+"""Public actions from the user"""
 
 
 import logging
@@ -127,6 +127,7 @@ class ShowProductHandler(BaseHandler):
         'rating': params['rating'],
         'category': pdoc.getCategory(),
         'image_url': pdoc.getImageUrl(),
+        'user_id': pdoc.getUserId(),
         'prod_doc': doc,
         'user_is_admin': user_is_poster,
         'meetPoint': meetPoint,
@@ -233,9 +234,6 @@ class CreateReviewHandler(BaseHandler):
           username=username, rating=rating,
           comment=comment)
       review.put()
-      # in a transactional task, update the parent product's average
-      # rating to include this review's rating, and flag the review as
-      # processed.
       defer(utils.updateAverageRating, key, _transactional=True)
       return review
     return ndb.transaction(_tx)
@@ -532,53 +530,6 @@ class ShowReviewsHandler(BaseHandler):
           'avg_rating': avg_rating}
       # render the template.
       self.render_template('reviews.html', template_values)
-
-class StoreLocationHandler(BaseHandler):
-  """Show the reviews for a given product.  This information is pulled from the
-  datastore Review entities."""
-
-  def get(self):
-    """Show a list of reviews for the product indicated by the 'pid' request
-    parameter."""
-
-    query = self.request.get('location_query')
-    lat = self.request.get('latitude')
-    lon = self.request.get('longitude')
-    # the location query from the client will have this form:
-    # distance(store_location, geopoint(37.7899528, -122.3908226)) < 40000
-    # logging.info('location query: %s, lat %s, lon %s', query, lat, lon)
-    try:
-      index = search.Index(config.STORE_INDEX_NAME)
-      # search using simply the query string:
-      # results = index.search(query)
-      # alternately: sort results by distance
-      loc_expr = 'distance(store_location, geopoint(%s, %s))' % (lat, lon)
-      sortexpr = search.SortExpression(
-            expression=loc_expr,
-            direction=search.SortExpression.ASCENDING, default_value=0)
-      sortopts = search.SortOptions(expressions=[sortexpr])
-      search_query = search.Query(
-          query_string=query.strip(),
-          options=search.QueryOptions(
-              sort_options=sortopts,
-              ))
-      results = index.search(search_query)
-    except search.Error:
-      logging.exception("There was a search error:")
-      self.render_json([])
-      return
-    # logging.info("geo search results: %s", results)
-    response_obj2 = []
-    for res in results:
-      gdoc = docs.Store(res)
-      geopoint = gdoc.getFieldVal(gdoc.STORE_LOCATION)
-      resp = {'addr': gdoc.getFieldVal(gdoc.STORE_ADDRESS),
-              'storename': gdoc.getFieldVal(gdoc.STORE_NAME),
-              'lat': geopoint.latitude, 'lon': geopoint.longitude}
-      response_obj2.append(resp)
-    logging.info("resp: %s", response_obj2)
-    self.render_json(response_obj2)
-
 
 class OrderHandler(BaseHandler):
     """Display product details."""

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block head %}
-    <title>My Profile</title>
+    <title>Profile</title>
 {% endblock %}
 
 {% block content %}
@@ -46,7 +46,7 @@
     	<form name="searchbyuserform" class="form-horizontal col-xs-12 col-md-12 col-sm-12 col-lg-12" action="/psearch?sort=relevance&query={{ user_id }}" method="post">
             <div class="row">
                 <div class=" col-xs-1 col-md-1 col-sm-1 col-lg-1">
-                    <input type="submit" class="btn primary"  name="psearchsub" value="Listings"/>
+                    <input type="submit" class="btn primary"  name="psearchsub" value="Show Listings of this User"/>
                 </div>
             </div>
         </form>

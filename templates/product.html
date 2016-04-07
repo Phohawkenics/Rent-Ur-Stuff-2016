@@ -40,7 +40,9 @@
     	<div class="product-info form-group col-md-12col-lg-12">
     			<br/>
           {% for field in prod_doc.fields %}
-    			<p class="{{field.name}}"><span ><b>{{field.name}}</b>: &nbsp;{{field.value}}</span> <br/>
+            {% if field.value %}
+    			   <p class="{{field.name}}"><span ><b>{{field.name}}</b>: &nbsp;{{field.value}}</span> <br/>
+            {% endif %}
           </p>
     			{% endfor %}
     			<br/><a href="{{review_link}}">Reviews for {{pname}}</a>
@@ -84,7 +86,6 @@
     </form>
     <div class="row col-md-12 col-lg-12">
       <div class="form-group">
-        <div class="col-md-6 col-lg-6">
           <h4>Create a Review for {{pname}}</h4>
           <form action="/create_review" method="post">
             <input type="hidden" name="pid" value="{{pid}}" />
@@ -108,7 +109,7 @@
             </div>
           </form>
           <hr/>
-          <form name="searchbyuserform" class="form-horizontal " action="/psearch?sort=relevance&query={{ user_id }}" method="post">
+          <form name="searchbyuserform" class="form-horizontal " action="/psearch?sort=relevance&query={{user_id}}" method="post">
               <input type="submit" class="btn primary"  name="psearchsub" value="Show listings of the same user"/>
           </form>
           {% if user_is_admin %}
@@ -121,7 +122,6 @@
             </div>
           </form>
           {% endif %}
-        </div>
       </div>
     </div>
     <div class="row col-md-12 col-lg-12">

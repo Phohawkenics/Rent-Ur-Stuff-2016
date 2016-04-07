@@ -14,15 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-""" Contains the Datastore model classes used by the app: Category, Product,
-and Review.
-Each Product entity will have a corresponding indexed "product" search.Document.
-Product entities contain a subset of the fields in their corresponding document.
-Product Review entities are not indexed (do not have corresponding Documents).
-Reviews include a product id field, pointing to their 'parent' product, but
-are not part of the same entity group, thus avoiding contention in
-scenarios where a large number of product reviews might be edited/added at once.
-"""
+""" Contains the Datastore model classes used by the app"""
 
 import logging
 
@@ -31,21 +23,6 @@ import docs
 
 from google.appengine.api import memcache
 from google.appengine.ext import ndb
-
-#Users
-#user_id (PK): int	display_name: String	email: String	phone_number: String	address: String
-
-
-#Posts
-#doc_id (PK): int	user_id: int	location: String	title	description	category	price	start_date	end_date	image_url	phone_number	address	is_available
-
-
-
-
-
-#Transactions
-#transaction_id (PK)	owner_id	lender_id	start_date	end_date
-
 
 class Category(ndb.Model):
   """The model class for product category information.  Supports building a
@@ -73,8 +50,8 @@ class Category(ndb.Model):
 
   @classmethod
   def buildAllCategories(cls):
-    """ build the category instances from the provided static data, if category
-    entities do not already exist in the Datastore. (see categories.py)."""
+    """ build the category instances from the provided static data if they
+        don't exist."""
     logging.info("buildCat()")
     # Don't build if there are any categories in the datastore already
     if cls.query().get():
@@ -104,8 +81,6 @@ class Category(ndb.Model):
 
   @classmethod
   def buildChildCategories(cls, children, parent_key):
-    """Given a list of category data structures and a parent key, build the
-    child categories, with the given key as their entity group parent."""
     for cat in children:
       cls.buildCategory(cat, parent_key)
 
@@ -122,10 +97,7 @@ class Category(ndb.Model):
     return cls._CATEGORY_INFO
 
 class Product(ndb.Model):
-  """Model for Product data. A Product entity will be built for each product,
-  and have an associated search.Document. The product entity does not include
-  all of the fields in its corresponding indexed product document, only 'core'
-  fields."""
+  """Model for Product data."""
 
   doc_id = ndb.StringProperty()  # the id of the associated product
   user_id = ndb.IntegerProperty()
@@ -152,8 +124,6 @@ class Product(ndb.Model):
     return self.key.id()
 
   def reviews(self):
-    """Retrieve all the (active) associated reviews for this product, via the
-    reviews' product_key field."""
     return Review.query(
         Review.active == True,
         Review.rating_added == True,
@@ -161,10 +131,7 @@ class Product(ndb.Model):
 
   @classmethod
   def updateProdDocsWithNewRating(cls, pkeys):
-    """Given a list of product entity keys, check each entity to see if it is
-    marked as needing a document re-index.  This flag is set when a new review
-    is created for that product, and config.BATCH_RATINGS_UPDATE = True.
-    Generate the modified docs as needed and batch re-index them."""
+    """ Add new rating to a document"""
 
     doclist = []
 
@@ -187,8 +154,7 @@ class Product(ndb.Model):
 
   @classmethod
   def create(cls, params, doc_id):
-    """Create a new product entity from a subset of the given params dict
-    values, and the given doc_id."""
+    """Create a new product """
     prod = cls(
         id=params['pid'], price=params['price'],
         category=params['category'], doc_id=doc_id)
@@ -217,9 +183,6 @@ class Product(ndb.Model):
     # update the associated document with the new ratings info
     # and reindex
     docs.Product.updateRatingsInfo(doc_id, avg_rating)
-
-
-
 
 class Review(ndb.Model):
   """Model for Review data. Associated with a product entity via the product

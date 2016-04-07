@@ -122,15 +122,24 @@
     		$('#books').hide();
     		$('#television').hide();
 
+    		setFields();
+
 		    $('#category').on('change', function() {
-			  if (this.value == 'books') {
+			  setFields(this);
+			});
+
+			function setFields() {
+			  if ($('#category').val() == 'Books') {
 			  	$('#books').show();
 			  	$('#television').hide();
-			  } else if (this.value == 'hd televisions') {
+			  } else if ($('#category').val() == 'HD Televisions') {
 			  	$('#books').hide();
 			  	$('#television').show();
+			  } else {
+			  	$('#books').hide();
+			  	$('#television').hide();
 			  }
-			});
+			}
 		});
     </script>
 {% endblock %}

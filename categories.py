@@ -20,23 +20,25 @@ are two categories: books, and televisions.
 from google.appengine.api import search
 
 
-televisions = {'name': 'hd televisions', 'children': []}
-books = {'name': 'books', 'children': []}
+televisions = {'name': 'HD Televisions', 'children': []}
+books = {'name': 'Books', 'children': []}
+other = { 'name': 'Other', 'children': []}
 
 
 
-ctree =  {'name': 'root', 'children': [books, televisions]}
+ctree =  {'name': 'root', 'children': [books, televisions, other]}
 
 # [The core fields that all products share are: product id, name, description,
 # category, category name, and price]
 # Define the non-'core' (differing) product fields for each category
 # above, and their types.
-product_dict =  {'hd televisions': {'size': search.NumberField,
+product_dict =  {'HD Televisions': {'size': search.NumberField,
                                  'brand': search.TextField,
                                  'tv_type': search.TextField},
-                 'books': {'publisher': search.TextField,
+                 'Books': {'publisher': search.TextField,
                            'pages': search.NumberField,
                            'author': search.TextField,
                            'title': search.TextField,
-                           'isbn': search.TextField}
+                           'isbn': search.TextField},
+	             'Other': {'publisher': search.TextField}
                 }

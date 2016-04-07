@@ -5,10 +5,8 @@
 {% endblock %}
 
  {% block content %}
+	<h1> Product Search </h1>
 	<p>&nbsp;</p>
-	<p><a target="_blank" href="/static/instrs.html">Click for information</a> about the demo app. Log in to add sample data.</p>
-	<p>&nbsp;</p>
-    <h4>Product Search</h4>
 	<form name="searchform" class="form-horizontal col-xs-12 col-md-12 col-sm-12 col-lg-12" action="/psearch" method="post">
 		<div class="row">
 			<input type="hidden" name="qtype" value="product"/>
@@ -73,20 +71,20 @@
 	  
 		<article class="search-result row">
 			<div>
-				<h3><a href="#" title="">{{result.5}}</a></h3>
+				<h3><a href="/product?pid={{result.1}}" title="">{{result.5}}</a></h3>
 			</div>
 			<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 productImage">
-				<a href="#" title="Image" class="thumbnail"><img src=" {{result.8}}" alt="Image" /></a>
+				<a href="/product?pid={{result.1}}" title="Image" class="thumbnail"><img src=" {{result.8}}" alt="Image of posting: {{result.5}}" /></a>
 			</div>
 			<ul class="meta-search list-unstyled col-xs-12 col-sm-6 col-md-6 col-lg-6">
 					<li>
 						<div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
-							<i class="glyphicon glyphicon-tags"></i> <span> {{result.9}}</span>
+							<i class="glyphicon glyphicon-tags"></i> <span> {{result.10}}</span>
 						</div>
 					</li>
 					<li>
 						<div class=" col-xs-6 col-sm-4 col-md-4 col-lg-4">
-							<i class="glyphicon glyphicon-user"></i> <span>{{result.10}}</span>
+							<i class="glyphicon glyphicon-user"></i> <span>{{result.9}}</span>
 						</div>
 					</li>
                     <li>

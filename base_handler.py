@@ -69,7 +69,7 @@ class BaseHandler(webapp2.RequestHandler):
     """Build link to the admin management page, if the user is logged in."""
     if users.get_current_user():
       admin_url = '/admin/manage'
-      return (admin_url, 'Admin/Add sample data')
+      return (admin_url, 'Admin Data Handling')
     else:
       return (None, None)
 
@@ -92,7 +92,7 @@ class BaseHandler(webapp2.RequestHandler):
   def createProductAdminLink(self):
     if users.get_current_user():
       admin_create_url = '/admin/create_product'
-      return (admin_create_url, 'Create new product (admin)')
+      return (admin_create_url, 'Create new Posting')
     else:
       return (None, None)
 

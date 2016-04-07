@@ -27,7 +27,6 @@ application = webapp2.WSGIApplication(
      ('/product', ShowProductHandler),
      ('/reviews', ShowReviewsHandler),
      ('/create_review', CreateReviewHandler),
-     ('/get_store_locations', StoreLocationHandler),
      ('/order', OrderHandler)
     ],
     debug=True)
