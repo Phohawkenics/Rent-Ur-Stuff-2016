@@ -148,7 +148,7 @@ class UserProfileHandler(BaseHandler):
     userinfo = ndb.Key(models.UserInfo, user.user_id()).get()
     if userinfo is not None:
         userInfo = {
-            'user_id': '',
+            'user_id': userinfo.key.id(),
             'nickname': userinfo.nickname,
             'email': userinfo.email,
             'phone_number': userinfo.phoneNumber,

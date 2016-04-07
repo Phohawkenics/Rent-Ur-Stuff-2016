@@ -128,7 +128,7 @@ class Product(ndb.Model):
   fields."""
 
   doc_id = ndb.StringProperty()  # the id of the associated product
-  user_id = ndb.UserProperty()
+  user_id = ndb.IntegerProperty()
   location = ndb.StringProperty()
   price = ndb.FloatProperty()
   category = ndb.StringProperty()

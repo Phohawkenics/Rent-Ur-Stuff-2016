@@ -41,7 +41,18 @@
 					<input class="btn primary" type="submit" value="Update"/>
 					<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
 			</div>
+
 		</form>
+    	<form name="searchbyuserform" class="form-horizontal col-xs-12 col-md-12 col-sm-12 col-lg-12" action="/psearch" method="post">
+            <div class="row">
+                <div class=" col-xs-12 col-md-8 col-sm-8 col-lg-5">
+                    <input class=" form-control" type="text" id="query" name="query" size="40" value="{{user_id}}"  placeholder="Search" />
+                </div>
+                <div class=" col-xs-1 col-md-1 col-sm-1 col-lg-1">
+                    <input type="submit" class="btn primary"  name="psearchsub" value="Product Search"/>
+                </div>
+            </div>
+        </form>
 	</div>
 {% endblock %}
 
