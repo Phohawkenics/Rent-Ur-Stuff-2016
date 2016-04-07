@@ -212,6 +212,7 @@ class CreateProductHandler(BaseHandler):
           'category': '',
           'image_url': '',
           'price': '',
+          'ppacc': '',
           'cat_info': models.Category.getCategoryInfo()
           }
       pf = categories.product_dict
@@ -278,7 +279,7 @@ class ViewTransactionsHandler(BaseHandler):
                 transaction = models.Transaction()
                 transaction.doc_id = users.get_current_user().user_id()
                 transaction.product = 'Product XXXXXXX'
-                transaction.rentee = 'John Carter'
+                transaction.rentee_id = 'John Carter'
                 transaction.email = 'johncarter@mail.com'
                 transaction.phone_number = '514-123-4567'
                 transaction.meet_point = '1111 Barclay # 1'

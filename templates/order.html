@@ -4,8 +4,32 @@
 {% endblock %}
 
 {% block content %}
-<h2>Order Form</h2>
+<h1>Order Form</h1>
 
+    <p>Select PAY NOW if the following information is correct.</p> <br><br>
+    <p>Item:  {{pname}}</p> <br>
+    <p>Pickup:  {{pickupD}}</p><br>
+    <p>Return:  {{returnD}}</p><br>
+    <p>Total:  {{amount_paid}}</p><br><br>
 
- 
+                <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_xclick">
+                <input type="hidden" name="business" value={{ppacc}}>
+                <input type="hidden" name="lc" value="CA">
+                <input type="hidden" name="item_name" value={{pname}}>
+                <input type="hidden" name="quantity" value="1">
+                <input type="hidden" name="amount" value="{{amount_paid}}">
+                <input type="hidden" name="currency_code" value="CAD">
+                <input type="hidden" name="button_subtype" value="services">
+                <input type="hidden" name="tax_rate" value="0.000">
+                <input type="hidden" name="shipping" value="0.00">
+                <input type="hidden" name="return" value="http://rent-your-stuff.appspot.com/">
+                <input type="hidden" name="cancel" value="http://rent-your-stuff.appspot.com/">
+                <input type="hidden" name="notify_url" value="http://rent-your-stuff.appspot.com/paypalreturn">
+                <input type="hidden" name="bn" value="PP-BuyNowBF:btn_paynow_LG.gif:NonHosted">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_paynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+
 {% endblock %}
+

@@ -28,7 +28,10 @@ import config
 import docs
 import models
 import utils
+import uuid
 
+
+from datetime import datetime
 from google.appengine.api import search
 from google.appengine.api import users
 from google.appengine.ext.deferred import defer
@@ -531,6 +534,7 @@ class ShowReviewsHandler(BaseHandler):
       # render the template.
       self.render_template('reviews.html', template_values)
 
+
 class OrderHandler(BaseHandler):
     """Display product details."""
 
@@ -541,10 +545,12 @@ class OrderHandler(BaseHandler):
         params = {
             'pid': '',
             'pname': '',
-            'category': '',
             'image_url': '',
             'price': '',
-            'ppacc': ''
+            'ppacc': '',
+            'pickupD': '',
+            'returnD': '',
+            'amount_paid': ''
         }
         for k, v in params.iteritems():
             # Possibly replace default values.
@@ -576,10 +582,21 @@ class OrderHandler(BaseHandler):
             error_message = ('Document not found for pid %s.' % pid)
             return self.abort(404, error_message)
             logging.error(error_message)
+
+        date_format = "%Y-%m-%d"
+        pickupD = (datetime.strptime(self.request.get('pickupD'), date_format))
+        returnD = (datetime.strptime(self.request.get('returnD'), date_format))
+        logging.info("pickup: %s", pickupD)
+        logging.info("return: %s", returnD)
+        c = returnD - pickupD
+        logging.info("c: %s", c)
+        c = int(c.days)
+        logging.info("days: %d", c)
         pdoc = docs.Product(doc)
         pname = pdoc.getName()
         price = pdoc.getPrice()
         ppacc = pdoc.getMerchant()
+        amount_paid = float(price) * int(c)
         app_url = wsgiref.util.application_uri(self.request.environ)
         template_values = {
             'app_url': app_url,
@@ -587,10 +604,36 @@ class OrderHandler(BaseHandler):
             'pname': pname,
             'price': price,
             'ppacc': ppacc,
+            'pickupD': pickupD.date(),
+            'returnD': pickupD.date(),
+            'amount_paid': amount_paid,
             'image_url': pdoc.getImageUrl(),
             'prod_doc': doc,
             # for this demo, 'admin' status simply equates to being logged in
             'user_is_admin': users.get_current_user()}
+        logging.info("name: %s", pname)
+        logging.info("name: %s", pickupD.date())
+        logging.info("name: %s", returnD.date())
+        logging.info("name: %s", amount_paid)
+        user = users.get_current_user()
+        userinfo = ndb.Key(models.UserInfo, pdoc.getUserId()).get()
+        transaction = models.Transaction(
+            t_id = uuid.uuid4().hex,  # auto-generate default UID
+            rentee_id = user.user_id(),  # give id automatically to product
+            renter_id = pdoc.getUserId(),
+            amount_paid = amount_paid,
+            pickupD = pickupD.date(),
+            returnD = returnD.date(),
+            meet_point = userinfo.meetPoint,
+            doc_id = user.user_id(),
+            product = pname,
+            email = userinfo.email,
+            #dateSent = '',
+            #payment_status = ndb.StringProperty(),
+            verified = False
+        )
+        transaction.put()
+        logging.info('transaction saved')
         logging.info('template_values :')
         logging.info(template_values)
         self.render_template('order.html', template_values)

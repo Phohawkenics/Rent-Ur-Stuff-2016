@@ -29,12 +29,12 @@
 			    	{% for transaction in transactions %}
 			        <tr>
 			            <td>{{transaction.product}}</td>
-			            <td>{{transaction.rentee}}</td>
+			            <td>{{transaction.rentee_id}}</td>
 			            <td>{{transaction.email}}</td>
 			            <td>{{transaction.phone_number}}</td>
 			            <td>{{transaction.meet_point}}</td>
-			            <td>{{transaction.pick_up_date}}</td>
-			            <td>{{transaction.return_date}}</td>
+			            <td>{{transaction.pickupD}}</td>
+			            <td>{{transaction.returnD}}</td>
 			            <td>{{transaction.amount_paid}}</td>
 			        </tr>
 			        {% endfor %}
