@@ -197,7 +197,16 @@ class CreateProductHandler(BaseHandler):
     """Filter the param set to the expected params."""
     pid = self.request.get('pid')
     doc = docs.Product.getDocFromPid(pid)
+
+    user = users.get_current_user()
+    userinfo = ndb.Key(models.UserInfo, user.user_id()).get()
+    logging.info("user is: %s", userinfo)
+    isProfileCreated = True
+    if userinfo is None:
+        isProfileCreated = False
+    logging.info("isProfileCreated: %s", isProfileCreated)
     params = {}
+
     if doc:  # populate default params from the doc
       fields = doc.fields
       for f in fields:
@@ -213,7 +222,8 @@ class CreateProductHandler(BaseHandler):
           'image_url': '',
           'price': '',
           'ppacc': '',
-          'cat_info': models.Category.getCategoryInfo()
+          'cat_info': models.Category.getCategoryInfo(),
+          'user_profile_not_created': isProfileCreated
           }
       pf = categories.product_dict
       # add the fields specific to the categories
@@ -240,7 +250,6 @@ class CreateProductHandler(BaseHandler):
   def createProduct(self, params):
     """Create a product entity and associated document from the given params
     dict."""
-
     try:
       product = docs.Product.buildProduct(params)
       self.redirect(

@@ -4,13 +4,14 @@
 {% endblock %}
 
 {% block content %}
-    <h3>Add a New Product to the Catalog</h3>
+    <h2>Add a New Product to the Catalog</h2>
     <p>Enter a unique product ID. It should not contain whitespace. (An id has been auto-generated for you, in case you want to use it).</p>
     {% if error_message %}
       <p><b>Error</b>: {{error_message}}</p>
     {% endif %}
     <div class="row">
-		<h4>Product</h4>
+		<h3>Create Product</h3>
+        {% if user_profile_not_created %}
 		<form class="form-horizontal" action="/admin/create_product" method="post">
 			<!--<input type="hidden" name="category" value="books" /> -->
 			<div class="form-group col-sm-6 col-md-4  col-lg-3">
@@ -120,6 +121,11 @@
 					<input class="btn primary" id="subreview" name="subreview" type="submit" value="Create"/>
 					<input type="reset" class="btn primary"  name="reviewreset" value="Clear"/>
 			</div>
+            {% else %}
+            <div class="actions form-group col-sm-12 col-md-12 col-lg-12">
+					<h3>Please create your profile before creating a product.</h3>
+			</div>
+            {% endif %}
 		</form>
 		</div>
     </div> <!-- end row -->
