@@ -41,7 +41,3 @@ DOC_LIMIT = 3
 SAMPLE_DATA_BOOKS = 'sample_data_books.csv'
 SAMPLE_DATA_TVS = 'sample_data_tvs.csv'
 DEMO_UPDATE_BOOKS_DATA = 'sample_data_books_update.csv'
-
-# the size of the import batches, when reading from the csv file.  Must not
-# exceed 100.
-IMPORT_BATCH_SIZE = 5
