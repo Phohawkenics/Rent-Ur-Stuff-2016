@@ -45,11 +45,6 @@ def updateAverageRating(review_key):
       # signal that we need to reindex the doc with the new ratings info.
       product.needs_review_reindex = True
       ndb.put_multi([product, review])
-	  """We need to update the ratings associated document at some point as well.
-      If the app is configured to have BATCH_RATINGS_UPDATE set to True, don't
-      do this re-indexing now.  (Instead, all the out-of-date documents can be
-      be later handled in batch -- see cron.yaml).  If BATCH_RATINGS_UPDATE is
-      False, go ahead and reindex now in a transational task."""
       if not config.BATCH_RATINGS_UPDATE:
         defer(
             models.Product.updateProdDocWithNewRating,
